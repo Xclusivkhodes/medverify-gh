@@ -1,0 +1,67 @@
+<!doctype html>
+<html lang="en">
+<head>
+{{inc:head.html}}
+<title>How we checked — MedVerify GH</title>
+</head>
+<body>
+<div class="app">
+  <header class="topbar">
+    <a href="result.html" class="btn btn-icon btn-plain -ml-3" aria-label="Back to answer">{{i:arrow-left icon}}</a>
+    <p class="topbar-title">How we checked</p>
+    {{inc:toggle.html}}
+  </header>
+  <main class="gutter pt-6 pb-12">
+    <div class="flex items-center gap-3 flex-wrap">
+      <span class="vchip vchip--scam">{{i:warning-octagon-fill icon-xs}} Do not use · 98%</span>
+      <span class="ms inline-flex items-center gap-1">{{i:clock icon-xs}} 7.4 s total</span>
+    </div>
+    <h1 class="t-h1 mt-4">Which AI did what</h1>
+    <p class="t-muted mt-2">Every step, in order. Tap a source to read the FDA notice yourself.</p>
+
+    <section class="card p-5 mt-6" aria-label="Pipeline and time per step">
+      <ol class="flow" aria-label="Pipeline">
+        <li class="flow-node"><span class="model-ico">{{i:camera icon-sm}}</span><span class="flow-label">Photo</span><span class="ms">—</span></li>
+        <li class="flow-node"><span class="model-ico model-ico--nemotron">{{i:scan icon-sm}}</span><span class="flow-label">Read</span><span class="ms">2.4 s</span></li>
+        <li class="flow-node"><span class="model-ico model-ico--tavily">{{i:globe-simple icon-sm}}</span><span class="flow-label">Search</span><span class="ms">1.9 s</span></li>
+        <li class="flow-node"><span class="model-ico model-ico--nemotron">{{i:scales icon-sm}}</span><span class="flow-label">Match</span><span class="ms">2.8 s</span></li>
+        <li class="flow-node"><span class="model-ico model-ico--app">{{i:list-checks icon-sm}}</span><span class="flow-label">Rules</span><span class="ms">0.3 s</span></li>
+      </ol>
+      <div class="timing mt-5" aria-hidden="true"><span class="seg-nemotron" style="flex:2.4"></span><span class="seg-tavily" style="flex:1.9"></span><span class="seg-nemotron" style="flex:2.8"></span><span class="seg-app" style="flex:.3"></span></div>
+      <div class="flex flex-wrap gap-x-4 gap-y-1 mt-3">
+        <span class="legend" style="--dot:var(--color-tool-nemotron)">Nemotron · 2 steps</span>
+        <span class="legend" style="--dot:var(--color-tool-tavily)">Tavily · 1 step</span>
+        <span class="legend" style="--dot:var(--color-primary)">App rules</span>
+      </div>
+    </section>
+
+    <ol class="grid gap-4 mt-6">
+      <li class="card step-card">
+        <div class="step-head"><span class="model-ico model-ico--nemotron">{{i:scan icon-sm}}</span><div class="flex-1"><p class="t-label">1 · Read the photo</p><p class="t-small t-muted">Nemotron VL · vision</p></div><span class="status status--done">2.4 s</span></div>
+        <dl class="io mt-4"><dt>IN</dt><dd>1 photo, 1600 × 1200</dd><dt>OUT</dt><dd><strong>Para Clear Suspension 125</strong> · paracetamol 125 mg/5 ml · SyneCare, Mumbai · batch <strong>L220008</strong> · exp <strong>12/2024</strong></dd></dl>
+        <p class="model-id mt-3">nvidia/Nemotron-3.5-Super-VL</p>
+      </li>
+      <li class="card step-card">
+        <div class="step-head"><span class="model-ico model-ico--tavily">{{i:globe-simple icon-sm}}</span><div class="flex-1"><p class="t-label">2 · Searched FDA</p><p class="t-small t-muted">Tavily · FDA site only</p></div><span class="status status--done">1.9 s</span></div>
+        <dl class="io mt-4"><dt>IN</dt><dd class="t-mono">Para Clear Suspension L220008 recall alert</dd><dt>OUT</dt><dd>2 FDA pages kept</dd></dl>
+        <div class="mt-2">
+          <a id="s1" class="source" href="https://fdaghana.gov.gh/safety-alert-substandard-paracetamol-suspension-received-from-republic-of-liberia/"><span class="source-num">1</span><span><span class="source-title">Safety Alert: substandard paracetamol suspension</span><span class="source-host">fdaghana.gov.gh · 26 Jun 2023</span></span>{{i:arrow-square-out icon-xs text-text-subtle}}</a>
+          <a id="s2" class="source" href="https://fdaghana.gov.gh/product-register/"><span class="source-num">2</span><span><span class="source-title">FDA product register</span><span class="source-host">fdaghana.gov.gh · no match</span></span>{{i:arrow-square-out icon-xs text-text-subtle}}</a>
+        </div>
+      </li>
+      <li class="card step-card">
+        <div class="step-head"><span class="model-ico model-ico--nemotron">{{i:scales icon-sm}}</span><div class="flex-1"><p class="t-label">3 · Matched batch</p><p class="t-small t-muted">Nemotron 3 Super</p></div><span class="status status--done">2.8 s</span></div>
+        <dl class="io mt-4"><dt>IN</dt><dd>Step 1 pack details + 2 FDA pages</dd><dt>OUT</dt><dd><strong>Do not use, 98%.</strong> Name, maker and batch L220008 match the alert exactly <a class="cite" href="#s1">1</a>. Not on the register <a class="cite" href="#s2">2</a>. Expired.</dd></dl>
+        <p class="model-id mt-3">nvidia/nemotron-3-super-120b-a12b</p>
+      </li>
+      <li class="card step-card">
+        <div class="step-head"><span class="model-ico model-ico--app">{{i:list-checks icon-sm}}</span><div class="flex-1"><p class="t-label">4 · Next steps</p><p class="t-small t-muted">MedVerify rules · no AI</p></div><span class="status status--done">0.3 s</span></div>
+        <p class="t-small t-muted mt-3">Official contacts only: 112, FDA hotline 055 111 2224/5, adr.fdaghana.gov.gh. Checked by our team, never written by the AI.</p>
+      </li>
+    </ol>
+
+    <div class="note mt-6">{{i:info icon-sm}}<div><strong>About this check</strong><p>We only search FDA Ghana pages. “No alerts found” never means a medicine is safe for you.</p></div></div>
+  </main>
+</div>
+</body>
+</html>

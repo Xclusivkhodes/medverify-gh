@@ -1,0 +1,15 @@
+node_modules
+.next
+out
+.git
+.env
+.env.*
+!.env.example
+uploads
+agent-tools
+test-results
+playwright-report
+blob-report
+coverage
+data
+*.tsbuildinfo

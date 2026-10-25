@@ -1,0 +1,69 @@
+<!doctype html>
+<html lang="en">
+<head>
+{{inc:head.html}}
+<title>MedVerify GH — Check your medicine against FDA Ghana alerts</title>
+</head>
+<body>
+<div class="app">
+  {{inc:topbar.html}}
+  <main class="pb-12">
+    <section class="gutter pt-8">
+      <p class="t-eyebrow">FDA Ghana alerts &amp; recalls · Free</p>
+      <h1 class="t-display mt-3">Check the batch,<br>not the box.</h1>
+      <p class="t-body-lg t-muted mt-4">Photograph your medicine pack. In about 10 seconds we compare its batch number with FDA Ghana warnings.</p>
+    </section>
+
+    <section class="gutter mt-8" aria-labelledby="check-h">
+      <h2 id="check-h" class="sr-only">Check a medicine</h2>
+      <a href="input.html" class="btn btn-primary btn-xl btn-block">{{i:camera icon}} Photograph the pack</a>
+      <div class="grid grid-cols-2 gap-3 mt-3">
+        <a href="input.html" class="btn btn-outline">{{i:upload-simple icon-sm}} Upload</a>
+        <a href="input.html" class="btn btn-outline">{{i:keyboard icon-sm}} Type it</a>
+      </div>
+      <p class="t-small t-muted mt-4 flex items-start gap-2">{{i:barcode icon-sm mt-0.5 text-primary}}<span>Show the side with the <strong class="text-text">batch number</strong> and <strong class="text-text">expiry date</strong>.</span></p>
+    </section>
+
+    <section class="mt-10" aria-labelledby="ex-h">
+      <h2 id="ex-h" class="gutter t-label">No pack nearby? Try an example</h2>
+      <div class="scroll-x gutter mt-3 pb-1">
+        <a href="input.html" class="chip chip-link">{{i:drop icon-sm}} Child’s fever syrup</a>
+        <a href="input.html" class="chip chip-link">{{i:pill icon-sm}} Diabetes tablets</a>
+        <a href="input.html" class="chip chip-link">{{i:eyedropper icon-sm}} Eye drops</a>
+      </div>
+    </section>
+
+    <section class="gutter mt-14" aria-labelledby="how-h">
+      <p class="t-eyebrow">How it works</p>
+      <h2 id="how-h" class="t-h2 mt-2">Three steps. No sign-up.</h2>
+      <ol class="mt-6 grid gap-6">
+        <li class="how"><span class="how-ico">{{i:camera icon-sm}}</span><div><p class="t-label">Snap the pack</p><p class="t-muted mt-0.5">Box, bottle or blister. Keep the batch number sharp.</p></div></li>
+        <li class="how"><span class="how-ico">{{i:magnifying-glass icon-sm}}</span><div><p class="t-label">AI checks FDA Ghana</p><p class="t-muted mt-0.5">It reads the name, batch and expiry, then searches FDA alerts and recalls.</p></div></li>
+        <li class="how"><span class="how-ico">{{i:list-checks icon-sm}}</span><div><p class="t-label">Get a clear answer</p><p class="t-muted mt-0.5">Do not use, Check first, or No alerts found, with the FDA notice and what to do.</p></div></li>
+      </ol>
+    </section>
+
+    <section class="gutter mt-14" aria-labelledby="who-h">
+      <div class="card divided">
+        <div class="p-5"><p class="t-eyebrow">Open about our AI</p><h2 id="who-h" class="t-h3 mt-1">Who checks your medicine</h2></div>
+        <div class="p-5 flex gap-4 items-start"><span class="model-ico model-ico--nemotron">{{i:scan icon-sm}}</span><div><p class="t-label">NVIDIA Nemotron reads the pack</p><p class="t-small t-muted">Name, strength, maker, batch, expiry.</p></div></div>
+        <div class="p-5 flex gap-4 items-start"><span class="model-ico model-ico--tavily">{{i:globe-simple icon-sm}}</span><div><p class="t-label">Tavily searches FDA Ghana</p><p class="t-small t-muted">Only fdaghana.gov.gh: recalls, alerts, register.</p></div></div>
+        <div class="p-5 flex gap-4 items-start"><span class="model-ico model-ico--nemotron">{{i:scales icon-sm}}</span><div><p class="t-label">Nemotron matches the batch</p><p class="t-small t-muted">Gives the answer and links every FDA notice.</p></div></div>
+      </div>
+    </section>
+
+    <section class="gutter mt-6" aria-labelledby="sos-h">
+      <div class="card p-5">
+        <h2 id="sos-h" class="t-h3">Feeling unwell after a medicine?</h2>
+        <p class="t-muted mt-1">If it’s serious, get help now. Bring the pack.</p>
+        <a href="tel:112" class="contact contact--urgent"><span class="contact-ico">{{i:siren icon-sm}}</span><span><strong>Call 112</strong><span class="sub">Ambulance and emergencies, free</span></span><span class="contact-go">{{i:caret-right icon-sm}}</span></a>
+      </div>
+    </section>
+
+    <footer class="gutter mt-10 t-small t-subtle">
+      <p>MedVerify GH checks public FDA Ghana notices. It is not medical advice. Always ask your pharmacist or doctor.</p>
+    </footer>
+  </main>
+</div>
+</body>
+</html>

@@ -1,0 +1,8 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="320" height="200" viewBox="0 0 320 200" role="img" aria-label="Example reference card for Harbour paracetamol tablets">
+  <rect width="320" height="200" rx="16" fill="#F4F4F5"/>
+  <rect x="24" y="36" width="88" height="128" rx="8" fill="#FFFFFF" stroke="#0B7A73" stroke-width="3"/>
+  <text x="132" y="78" fill="#18181B" font-family="Arial, sans-serif" font-size="20" font-weight="700">Harbour</text>
+  <text x="132" y="106" fill="#3F3F46" font-family="Arial, sans-serif" font-size="16">Paracetamol 500 mg</text>
+  <text x="132" y="138" fill="#0B7A73" font-family="ui-monospace, monospace" font-size="14">Example artwork</text>
+  <text x="132" y="162" fill="#71717A" font-family="Arial, sans-serif" font-size="12">Not a manufacturer photo</text>
+</svg>

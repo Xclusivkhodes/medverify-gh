@@ -1,0 +1,110 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="color-scheme" content="light dark">
+<meta name="theme-color" content="#FFFFFF" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#18181B" media="(prefers-color-scheme: dark)">
+<script>
+/* Theme: OS setting by default; the toggle stores 'light' | 'dark' in localStorage('mv-theme').
+   Runs before paint so there is no flash. ?theme=dark|light previews a theme without saving it. */
+(function () {
+  try {
+    var q = new URLSearchParams(location.search).get('theme');
+    var t = (q === 'light' || q === 'dark') ? q : localStorage.getItem('mv-theme');
+    if (t === 'light' || t === 'dark') document.documentElement.setAttribute('data-theme', t);
+  } catch (e) {}
+})();
+function mvToggleTheme() {
+  var d = document.documentElement;
+  var cur = d.getAttribute('data-theme') || (matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
+  var next = cur === 'dark' ? 'light' : 'dark';
+  d.setAttribute('data-theme', next);
+  try { localStorage.setItem('mv-theme', next); } catch (e) {}
+  document.querySelectorAll('.theme-toggle').forEach(function (b) { b.setAttribute('aria-label', next === 'dark' ? 'Use light mode' : 'Use dark mode'); });
+}
+</script>
+<link rel="icon" href="assets/logo/favicon.svg" type="image/svg+xml">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Onest:wght@400..700&family=Source+Sans+3:ital,wght@0,400..700;1,400&family=Geist+Mono:wght@400..600&display=swap">
+<link rel="stylesheet" href="assets/app.css">
+
+<title>States — MedVerify GH</title>
+</head>
+<body>
+<div class="app">
+  <header class="topbar"><p class="topbar-title">States</p><button type="button" class="btn btn-outline btn-icon theme-toggle" onclick="mvToggleTheme()" aria-label="Change light or dark mode"><svg class="icon-sm i-moon" aria-hidden="true" focusable="false" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256" fill="currentColor"><path d="M233.54,142.23a8,8,0,0,0-8-2,88.08,88.08,0,0,1-109.8-109.8,8,8,0,0,0-10-10,104.84,104.84,0,0,0-52.91,37A104,104,0,0,0,136,224a103.09,103.09,0,0,0,62.52-20.88,104.84,104.84,0,0,0,37-52.91A8,8,0,0,0,233.54,142.23ZM188.9,190.34A88,88,0,0,1,65.66,67.11a89,89,0,0,1,31.4-26A106,106,0,0,0,96,56,104.11,104.11,0,0,0,200,160a106,106,0,0,0,14.92-1.06A89,89,0,0,1,188.9,190.34Z"/></svg><svg class="icon-sm i-sun" aria-hidden="true" focusable="false" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256" fill="currentColor"><path d="M120,40V16a8,8,0,0,1,16,0V40a8,8,0,0,1-16,0Zm72,88a64,64,0,1,1-64-64A64.07,64.07,0,0,1,192,128Zm-16,0a48,48,0,1,0-48,48A48.05,48.05,0,0,0,176,128ZM58.34,69.66A8,8,0,0,0,69.66,58.34l-16-16A8,8,0,0,0,42.34,53.66Zm0,116.68-16,16a8,8,0,0,0,11.32,11.32l16-16a8,8,0,0,0-11.32-11.32ZM192,72a8,8,0,0,0,5.66-2.34l16-16a8,8,0,0,0-11.32-11.32l-16,16A8,8,0,0,0,192,72Zm5.66,114.34a8,8,0,0,0-11.32,11.32l16,16a8,8,0,0,0,11.32-11.32ZM48,128a8,8,0,0,0-8-8H16a8,8,0,0,0,0,16H40A8,8,0,0,0,48,128Zm80,80a8,8,0,0,0-8,8v24a8,8,0,0,0,16,0V216A8,8,0,0,0,128,208Zm112-88H216a8,8,0,0,0,0,16h24a8,8,0,0,0,0-16Z"/></svg></button>
+</header>
+  <main class="gutter pt-6 pb-10 grid gap-8">
+    <section aria-label="Can't read the batch">
+      <p class="t-eyebrow mb-3">Can’t read the batch</p>
+      <div class="card p-5">
+        <div class="flex gap-4 items-start">
+          <span class="thumb" style="filter:blur(1.6px)"><svg class="pack-svg" viewBox="0 0 260 170" role="img" aria-label="Example medicine carton: PARA CLEAR SUSPENSION 125, batch L220008, expiry 12/2024">
+  <defs>
+    <linearGradient id="pk2-f" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#FFFFFF"/><stop offset="1" stop-color="#EEF1F0"/></linearGradient>
+    <linearGradient id="pk2-s" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#D9DFDD"/><stop offset="1" stop-color="#C4CCCA"/></linearGradient>
+  </defs>
+  <path d="M214 22 L240 10 L240 140 L214 152Z" fill="url(#pk2-s)"/>
+  <path d="M20 22 L46 10 L240 10 L214 22Z" fill="#E4E9E8"/>
+  <rect x="20" y="22" width="194" height="130" fill="url(#pk2-f)"/>
+  <rect x="20" y="22" width="194" height="30" fill="#C8432B"/>
+  <path d="M20 52 h194" stroke="#E8E8EA" stroke-width="3"/>
+  <text x="32" y="42" font-family="Onest, sans-serif" font-weight="800" font-size="15" fill="#fff" letter-spacing=".02em">PARA CLEAR</text>
+  <text x="32" y="72" font-family="Source Sans 3, sans-serif" font-weight="700" font-size="11" fill="#2A2A2A">SUSPENSION 125</text>
+  <text x="32" y="86" font-family="Source Sans 3, sans-serif" font-size="8.5" fill="#555">Paracetamol Oral Suspension BP</text>
+  <text x="32" y="97" font-family="Source Sans 3, sans-serif" font-size="8.5" fill="#555">125 mg / 5 ml · 100 ml</text>
+  <circle cx="188" cy="76" r="14" fill="#FCE9E4"/><path d="M181 76h14M188 69v14" stroke="#C8432B" stroke-width="0" />
+  <text x="188" y="80" text-anchor="middle" font-family="Source Sans 3, sans-serif" font-weight="700" font-size="9" fill="#C8432B">125</text>
+  <g font-family="Geist Mono, monospace" font-size="8" fill="#333">
+    <text x="32" y="122">B.No : L220008</text>
+    <text x="32" y="133">MFG  : 01/2022</text>
+    <text x="32" y="144">EXP  : 12/2024</text>
+  </g>
+  <text x="206" y="144" text-anchor="end" font-family="Source Sans 3, sans-serif" font-size="7" fill="#777">SyneCare · Mumbai</text>
+</svg>
+</span>
+          <div><p class="t-label">We can’t read the batch number</p><p class="t-small t-muted mt-1">Move closer, add light, hold still. We won’t guess it.</p></div>
+        </div>
+        <div class="grid grid-cols-2 gap-3 mt-5">
+          <a href="#" class="btn btn-primary"><svg class="icon-sm" aria-hidden="true" focusable="false" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256" fill="currentColor"><path d="M208,56H180.28L166.65,35.56A8,8,0,0,0,160,32H96a8,8,0,0,0-6.65,3.56L75.71,56H48A24,24,0,0,0,24,80V192a24,24,0,0,0,24,24H208a24,24,0,0,0,24-24V80A24,24,0,0,0,208,56Zm8,136a8,8,0,0,1-8,8H48a8,8,0,0,1-8-8V80a8,8,0,0,1,8-8H80a8,8,0,0,0,6.66-3.56L100.28,48h55.43l13.63,20.44A8,8,0,0,0,176,72h32a8,8,0,0,1,8,8ZM128,88a44,44,0,1,0,44,44A44.05,44.05,0,0,0,128,88Zm0,72a28,28,0,1,1,28-28A28,28,0,0,1,128,160Z"/></svg> Retake</a>
+          <a href="#" class="btn btn-outline"><svg class="icon-sm" aria-hidden="true" focusable="false" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256" fill="currentColor"><path d="M224,48H32A16,16,0,0,0,16,64V192a16,16,0,0,0,16,16H224a16,16,0,0,0,16-16V64A16,16,0,0,0,224,48Zm0,144H32V64H224V192Zm-16-64a8,8,0,0,1-8,8H56a8,8,0,0,1,0-16H200A8,8,0,0,1,208,128Zm0-32a8,8,0,0,1-8,8H56a8,8,0,0,1,0-16H200A8,8,0,0,1,208,96ZM72,160a8,8,0,0,1-8,8H56a8,8,0,0,1,0-16h8A8,8,0,0,1,72,160Zm96,0a8,8,0,0,1-8,8H96a8,8,0,0,1,0-16h64A8,8,0,0,1,168,160Zm40,0a8,8,0,0,1-8,8h-8a8,8,0,0,1,0-16h8A8,8,0,0,1,208,160Z"/></svg> Type it</a>
+        </div>
+      </div>
+    </section>
+    <section aria-label="Slow network">
+      <p class="t-eyebrow mb-3">Slow network (after 8 s)</p>
+      <div class="note note--warn"><svg class="icon-sm" aria-hidden="true" focusable="false" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256" fill="currentColor"><path d="M128,24A104,104,0,1,0,232,128,104.11,104.11,0,0,0,128,24Zm0,192a88,88,0,1,1,88-88A88.1,88.1,0,0,1,128,216Zm64-88a8,8,0,0,1-8,8H128a8,8,0,0,1-8-8V72a8,8,0,0,1,16,0v48h48A8,8,0,0,1,192,128Z"/></svg><div><strong>Still checking…</strong><p>Your network is slow. Keep this page open. Don’t take the medicine yet.</p></div></div>
+    </section>
+    <section aria-label="Offline">
+      <p class="t-eyebrow mb-3">Offline</p>
+      <div class="card p-6 text-center">
+        <span class="mx-auto w-14 h-14 rounded-full border border-border grid place-items-center text-text-muted"><svg class="icon-lg" aria-hidden="true" focusable="false" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256" fill="currentColor"><path d="M213.92,210.62a8,8,0,1,1-11.84,10.76l-52-57.15a60,60,0,0,0-57.41,7.24,8,8,0,1,1-9.42-12.93A75.43,75.43,0,0,1,128,144c1.28,0,2.55,0,3.82.1L104.9,114.49A108,108,0,0,0,61,135.31,8,8,0,0,1,49.73,134,8,8,0,0,1,51,122.77a124.27,124.27,0,0,1,41.71-21.66L69.37,75.4a155.43,155.43,0,0,0-40.29,24A8,8,0,0,1,18.92,87,171.87,171.87,0,0,1,58,62.86L42.08,45.38A8,8,0,1,1,53.92,34.62ZM128,192a12,12,0,1,0,12,12A12,12,0,0,0,128,192ZM237.08,87A172.3,172.3,0,0,0,106,49.4a8,8,0,1,0,2,15.87A158.33,158.33,0,0,1,128,64a156.25,156.25,0,0,1,98.92,35.37A8,8,0,0,0,237.08,87ZM195,135.31a8,8,0,0,0,11.24-1.3,8,8,0,0,0-1.3-11.24,124.25,124.25,0,0,0-51.73-24.2A8,8,0,1,0,150,114.24,108.12,108.12,0,0,1,195,135.31Z"/></svg></span>
+        <p class="t-h3 mt-4">No internet right now</p>
+        <p class="t-muted mt-1">We saved your photo on this phone. We’ll check it when you’re back online.</p>
+        <div class="note mt-5 text-left"><svg class="icon-sm" aria-hidden="true" focusable="false" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256" fill="currentColor"><path d="M128,24A104,104,0,1,0,232,128,104.11,104.11,0,0,0,128,24Zm0,192a88,88,0,1,1,88-88A88.1,88.1,0,0,1,128,216Zm16-40a8,8,0,0,1-8,8,16,16,0,0,1-16-16V128a8,8,0,0,1,0-16,16,16,0,0,1,16,16v40A8,8,0,0,1,144,176ZM112,84a12,12,0,1,1,12,12A12,12,0,0,1,112,84Z"/></svg><div><strong>Until then</strong><p>Ask your pharmacist, or call the FDA on <span class="nowrap">055 111 2224</span>.</p></div></div>
+      </div>
+    </section>
+    <section aria-label="Error">
+      <p class="t-eyebrow mb-3">Error · FDA search failed</p>
+      <div class="card">
+        <ol class="divided checklist">
+          <li class="is-done"><span class="check-ico"><svg class="icon-sm" aria-hidden="true" focusable="false" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256" fill="currentColor"><path d="M232.49,80.49l-128,128a12,12,0,0,1-17,0l-56-56a12,12,0,1,1,17-17L96,183,215.51,63.51a12,12,0,0,1,17,17Z"/></svg></span><div><div class="check-head"><p class="check-title">Read the pack</p><span class="status status--done">2.4 s</span></div></div></li>
+          <li class="is-fail"><span class="check-ico"><svg class="icon-sm" aria-hidden="true" focusable="false" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256" fill="currentColor"><path d="M208.49,191.51a12,12,0,0,1-17,17L128,145,64.49,208.49a12,12,0,0,1-17-17L111,128,47.51,64.49a12,12,0,0,1,17-17L128,111l63.51-63.52a12,12,0,0,1,17,17L145,128Z"/></svg></span><div><div class="check-head"><p class="check-title">FDA search didn’t answer</p><span class="status status--fail">Failed</span></div><p class="t-small t-muted mt-1">Tavily took too long. We won’t give an answer without the FDA pages.</p></div></li>
+        </ol>
+        <div class="px-5 pb-5"><a href="#" class="btn btn-primary btn-block"><svg class="icon-sm" aria-hidden="true" focusable="false" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256" fill="currentColor"><path d="M240,56v48a8,8,0,0,1-8,8H184a8,8,0,0,1,0-16H211.4L184.81,71.64l-.25-.24a80,80,0,1,0-1.67,114.78,8,8,0,0,1,11,11.63A95.44,95.44,0,0,1,128,224h-1.32A96,96,0,1,1,195.75,60L224,85.8V56a8,8,0,1,1,16,0Z"/></svg> Try again</a></div>
+      </div>
+    </section>
+    <section aria-label="Low confidence">
+      <p class="t-eyebrow mb-3">Low confidence</p>
+      <div class="verdict verdict--unsure" role="status">
+        <div class="verdict-head"><span class="verdict-ico"><svg class="icon-lg" aria-hidden="true" focusable="false" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256" fill="currentColor"><path d="M128,24A104,104,0,1,0,232,128,104.11,104.11,0,0,0,128,24Zm0,168a12,12,0,1,1,12-12A12,12,0,0,1,128,192Zm8-48.72V144a8,8,0,0,1-16,0v-8a8,8,0,0,1,8-8c13.23,0,24-9,24-20s-10.77-20-24-20-24,9-24,20v4a8,8,0,0,1-16,0v-4c0-19.85,17.94-36,40-36s40,16.15,40,36C168,125.38,154.24,139.93,136,143.28Z"/></svg></span><p class="t-h2">We’re not sure</p></div>
+        <div class="verdict-body !py-4"><p>Treat it as <strong>Check first</strong>. Show the pack to a pharmacist before you use it.</p></div>
+      </div>
+    </section>
+  </main>
+</div>
+</body>
+</html>

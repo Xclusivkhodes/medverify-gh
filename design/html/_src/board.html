@@ -1,0 +1,95 @@
+<!doctype html>
+<html lang="en" data-theme="light">
+<head>
+{{inc:head.html}}
+<title>MedVerify GH v2 — Brand board</title>
+<style>
+  body { background: #FFFFFF; }
+  .bd { width: 2400px; padding: 72px 80px; }
+  .ph { width: 300px; border-radius: 28px; border: 1px solid var(--color-border); overflow: hidden; box-shadow: var(--shadow-lg); background: var(--color-surface); }
+  .ph img { display: block; width: 300px; }
+  .sw { height: 64px; border-radius: 8px; border: 1px solid rgba(0,0,0,.06); }
+  .lt { background: #F4F4F5; border-radius: 24px; padding: 40px; }
+  .dk { background: #111113; border-radius: 24px; padding: 40px; }
+  .dk .ph { border-color: #27272A; }
+  .cap { font: 500 12px/1.3 'Geist Mono', monospace; color: #71717A; margin-top: 12px; }
+  .dk .cap { color: #8E8E97; }
+</style>
+</head>
+<body>
+<div class="bd">
+  <div class="flex items-end justify-between">
+    <div>
+      <img src="assets/logo/lockup-light.svg" alt="MedVerify GH" class="h-14 w-auto">
+      <p class="t-display !text-[2.25rem] mt-8 max-w-[22ch]">Check the batch, not the box.</p>
+      <p class="t-body-lg t-muted mt-3 max-w-[60ch]">Brand v2 — calm, clinical and neutral. One teal accent, semantic verdict colours, neutral light and dark modes that follow the OS with a manual override.</p>
+    </div>
+    <div class="grid grid-cols-[repeat(4,136px)] gap-4 text-[0.75rem] font-mono">
+      <div><div class="sw" style="background:#0B7A73"></div><p class="cap">Primary<br>#0B7A73</p></div>
+      <div><div class="sw" style="background:#5FCDC3"></div><p class="cap">Primary · dark<br>#5FCDC3</p></div>
+      <div><div class="sw" style="background:#FAFAFA"></div><p class="cap">Background<br>#FAFAFA</p></div>
+      <div><div class="sw" style="background:#111113"></div><p class="cap">Background · dark<br>#111113</p></div>
+      <div><div class="sw" style="background:#C9302C"></div><p class="cap">Do not use<br>#C9302C</p></div>
+      <div><div class="sw" style="background:#B45309"></div><p class="cap">Check first<br>#B45309</p></div>
+      <div><div class="sw" style="background:#15803D"></div><p class="cap">No alerts found<br>#15803D</p></div>
+      <div><div class="sw" style="background:#E4E4E7"></div><p class="cap">Border<br>#E4E4E7</p></div>
+    </div>
+  </div>
+
+  <div class="mt-14 grid grid-cols-[1fr_1fr] gap-10">
+    <div class="lt">
+      <p class="t-eyebrow mb-5">Light</p>
+      <div class="flex gap-6">
+        <div><div class="ph"><img src="../mockups/01-landing-360x800@2x.png" alt=""></div><p class="cap">Landing</p></div>
+        <div><div class="ph"><img src="../mockups/03-analysing-360x800@2x.png" alt=""></div><p class="cap">Analysing</p></div>
+        <div><div class="ph"><img src="../mockups/04-result-360x800@2x.png" alt=""></div><p class="cap">Result</p></div>
+      </div>
+    </div>
+    <div class="dk">
+      <p class="t-eyebrow mb-5" style="color:#5FCDC3">Dark</p>
+      <div class="flex gap-6">
+        <div><div class="ph"><img src="../mockups/01-landing-dark-360x800@2x.png" alt=""></div><p class="cap">Landing</p></div>
+        <div><div class="ph"><img src="../mockups/04-result-dark-360x800@2x.png" alt=""></div><p class="cap">Result</p></div>
+        <div><div class="ph"><img src="../mockups/06-verdicts-dark-360x800@2x.png" alt=""></div><p class="cap">Verdicts</p></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="mt-14 grid grid-cols-[1.1fr_.9fr_.9fr] gap-10 items-start">
+    <div>
+      <p class="t-eyebrow mb-5">Desktop</p>
+      <img src="../mockups/landing-desktop-1440x900@2x.png" alt="" class="w-full rounded-xl border border-border shadow-md">
+    </div>
+    <div>
+      <p class="t-eyebrow mb-5">Type</p>
+      <p style="font:600 36px/1.1 Onest;letter-spacing:-.03em">Onest 600</p>
+      <p class="cap !mt-1">Display &amp; headings · 36 / 30 / 24 / 20 / 18</p>
+      <p class="mt-5" style="font:400 18px/1.55 'Source Sans 3'">Source Sans 3 — body text. Twi: Hwɛ yie. Ɔkɔm. Mepɛ sɛ mehwɛ.</p>
+      <p class="cap !mt-1">Body 18 · small 16 · caption 14 · micro 12</p>
+      <p class="mt-5" style="font:500 16px/1.4 'Geist Mono'">B.No L220008 · 2.4 s</p>
+      <p class="cap !mt-1">Geist Mono · batch numbers, timings, model IDs</p>
+      <p class="t-eyebrow mt-10 mb-4">Components</p>
+      <div class="flex flex-wrap gap-3 items-center">
+        <span class="btn btn-primary">Check medicine</span><span class="btn btn-outline">Type it</span><span class="btn btn-tonal">See FDA notice</span>
+      </div>
+      <div class="flex flex-wrap gap-2 mt-4"><span class="vchip vchip--scam">{{i:warning-octagon-fill icon-xs}} Do not use</span><span class="vchip vchip--suspicious">{{i:warning-fill icon-xs}} Check first</span><span class="vchip vchip--ok">{{i:check-circle-fill icon-xs}} No alerts found</span></div>
+      <div class="flex flex-wrap gap-2 mt-4"><span class="status status--done">2.4 s</span><span class="status status--run">Running</span><span class="status status--wait">Next</span><span class="model model--nemotron">Nemotron</span><span class="model model--tavily">Tavily</span></div>
+    </div>
+    <div>
+      <p class="t-eyebrow mb-5">Mark</p>
+      <div class="flex items-end gap-6">
+        <img src="assets/logo/app-icon-rounded-512.png" class="w-[120px]" alt="">
+        <img src="assets/logo/mark.svg" class="w-[64px]" alt="">
+        <img src="assets/logo/mark.svg" class="w-[32px]" alt="">
+        <img src="assets/logo/favicon-32.png" class="w-[16px]" alt="">
+      </div>
+      <div class="dk !p-6 mt-6"><img src="assets/logo/lockup-dark.svg" class="h-10 w-auto" alt=""></div>
+      <p class="t-small t-muted mt-6">A capsule standing upright, split in two tones, with a check in the top half: “this medicine was checked”. No crosses, no patterns.</p>
+      <p class="t-eyebrow mt-8 mb-3">Icons</p>
+      <div class="flex gap-4 text-text-muted">{{i:camera icon}}{{i:barcode icon}}{{i:magnifying-glass icon}}{{i:scales icon}}{{i:siren icon}}{{i:phone icon}}{{i:clipboard-text icon}}{{i:list-checks icon}}</div>
+      <p class="cap">Phosphor Regular · 24 px · 1.5 px optical stroke</p>
+    </div>
+  </div>
+</div>
+</body>
+</html>

@@ -1,0 +1,98 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="color-scheme" content="light dark">
+<meta name="theme-color" content="#FFFFFF" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#18181B" media="(prefers-color-scheme: dark)">
+<script>
+/* Theme: OS setting by default; the toggle stores 'light' | 'dark' in localStorage('mv-theme').
+   Runs before paint so there is no flash. ?theme=dark|light previews a theme without saving it. */
+(function () {
+  try {
+    var q = new URLSearchParams(location.search).get('theme');
+    var t = (q === 'light' || q === 'dark') ? q : localStorage.getItem('mv-theme');
+    if (t === 'light' || t === 'dark') document.documentElement.setAttribute('data-theme', t);
+  } catch (e) {}
+})();
+function mvToggleTheme() {
+  var d = document.documentElement;
+  var cur = d.getAttribute('data-theme') || (matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
+  var next = cur === 'dark' ? 'light' : 'dark';
+  d.setAttribute('data-theme', next);
+  try { localStorage.setItem('mv-theme', next); } catch (e) {}
+  document.querySelectorAll('.theme-toggle').forEach(function (b) { b.setAttribute('aria-label', next === 'dark' ? 'Use light mode' : 'Use dark mode'); });
+}
+</script>
+<link rel="icon" href="assets/logo/favicon.svg" type="image/svg+xml">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Onest:wght@400..700&family=Source+Sans+3:ital,wght@0,400..700;1,400&family=Geist+Mono:wght@400..600&display=swap">
+<link rel="stylesheet" href="assets/app.css">
+
+<title>Checking… — MedVerify GH</title>
+</head>
+<body>
+<div class="app">
+  <header class="topbar">
+    <a href="input.html" class="btn btn-icon btn-plain -ml-3" aria-label="Cancel and go back"><svg class="icon" aria-hidden="true" focusable="false" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256" fill="currentColor"><path d="M205.66,194.34a8,8,0,0,1-11.32,11.32L128,139.31,61.66,205.66a8,8,0,0,1-11.32-11.32L116.69,128,50.34,61.66A8,8,0,0,1,61.66,50.34L128,116.69l66.34-66.35a8,8,0,0,1,11.32,11.32L139.31,128Z"/></svg></a>
+    <p class="topbar-title">Checking</p>
+    <button type="button" class="btn btn-outline btn-icon theme-toggle" onclick="mvToggleTheme()" aria-label="Change light or dark mode"><svg class="icon-sm i-moon" aria-hidden="true" focusable="false" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256" fill="currentColor"><path d="M233.54,142.23a8,8,0,0,0-8-2,88.08,88.08,0,0,1-109.8-109.8,8,8,0,0,0-10-10,104.84,104.84,0,0,0-52.91,37A104,104,0,0,0,136,224a103.09,103.09,0,0,0,62.52-20.88,104.84,104.84,0,0,0,37-52.91A8,8,0,0,0,233.54,142.23ZM188.9,190.34A88,88,0,0,1,65.66,67.11a89,89,0,0,1,31.4-26A106,106,0,0,0,96,56,104.11,104.11,0,0,0,200,160a106,106,0,0,0,14.92-1.06A89,89,0,0,1,188.9,190.34Z"/></svg><svg class="icon-sm i-sun" aria-hidden="true" focusable="false" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256" fill="currentColor"><path d="M120,40V16a8,8,0,0,1,16,0V40a8,8,0,0,1-16,0Zm72,88a64,64,0,1,1-64-64A64.07,64.07,0,0,1,192,128Zm-16,0a48,48,0,1,0-48,48A48.05,48.05,0,0,0,176,128ZM58.34,69.66A8,8,0,0,0,69.66,58.34l-16-16A8,8,0,0,0,42.34,53.66Zm0,116.68-16,16a8,8,0,0,0,11.32,11.32l16-16a8,8,0,0,0-11.32-11.32ZM192,72a8,8,0,0,0,5.66-2.34l16-16a8,8,0,0,0-11.32-11.32l-16,16A8,8,0,0,0,192,72Zm5.66,114.34a8,8,0,0,0-11.32,11.32l16,16a8,8,0,0,0,11.32-11.32ZM48,128a8,8,0,0,0-8-8H16a8,8,0,0,0,0,16H40A8,8,0,0,0,48,128Zm80,80a8,8,0,0,0-8,8v24a8,8,0,0,0,16,0V216A8,8,0,0,0,128,208Zm112-88H216a8,8,0,0,0,0,16h24a8,8,0,0,0,0-16Z"/></svg></button>
+
+  </header>
+  <main class="gutter pt-6 pb-6 flex-1">
+    <div class="flex items-center gap-3">
+      <span class="thumb"><svg class="pack-svg" viewBox="0 0 260 170" role="img" aria-label="Example medicine carton: PARA CLEAR SUSPENSION 125, batch L220008, expiry 12/2024">
+  <defs>
+    <linearGradient id="pk2-f" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#FFFFFF"/><stop offset="1" stop-color="#EEF1F0"/></linearGradient>
+    <linearGradient id="pk2-s" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#D9DFDD"/><stop offset="1" stop-color="#C4CCCA"/></linearGradient>
+  </defs>
+  <path d="M214 22 L240 10 L240 140 L214 152Z" fill="url(#pk2-s)"/>
+  <path d="M20 22 L46 10 L240 10 L214 22Z" fill="#E4E9E8"/>
+  <rect x="20" y="22" width="194" height="130" fill="url(#pk2-f)"/>
+  <rect x="20" y="22" width="194" height="30" fill="#C8432B"/>
+  <path d="M20 52 h194" stroke="#E8E8EA" stroke-width="3"/>
+  <text x="32" y="42" font-family="Onest, sans-serif" font-weight="800" font-size="15" fill="#fff" letter-spacing=".02em">PARA CLEAR</text>
+  <text x="32" y="72" font-family="Source Sans 3, sans-serif" font-weight="700" font-size="11" fill="#2A2A2A">SUSPENSION 125</text>
+  <text x="32" y="86" font-family="Source Sans 3, sans-serif" font-size="8.5" fill="#555">Paracetamol Oral Suspension BP</text>
+  <text x="32" y="97" font-family="Source Sans 3, sans-serif" font-size="8.5" fill="#555">125 mg / 5 ml · 100 ml</text>
+  <circle cx="188" cy="76" r="14" fill="#FCE9E4"/><path d="M181 76h14M188 69v14" stroke="#C8432B" stroke-width="0" />
+  <text x="188" y="80" text-anchor="middle" font-family="Source Sans 3, sans-serif" font-weight="700" font-size="9" fill="#C8432B">125</text>
+  <g font-family="Geist Mono, monospace" font-size="8" fill="#333">
+    <text x="32" y="122">B.No : L220008</text>
+    <text x="32" y="133">MFG  : 01/2022</text>
+    <text x="32" y="144">EXP  : 12/2024</text>
+  </g>
+  <text x="206" y="144" text-anchor="end" font-family="Source Sans 3, sans-serif" font-size="7" fill="#777">SyneCare · Mumbai</text>
+</svg>
+</span>
+      <div class="min-w-0"><p class="t-label">Para Clear Suspension 125</p><p class="t-small t-muted flex items-center gap-2 flex-wrap"><span class="t-mono nowrap">L220008 · 12/2024</span><span class="tag-example">EXAMPLE</span></p></div>
+    </div>
+
+    <div class="mt-8 flex items-baseline justify-between"><h1 class="t-h2" aria-live="polite">Checking FDA Ghana…</h1><span class="ms" aria-label="Time so far">4.6 s</span></div>
+    <div class="progress mt-3" role="progressbar" aria-valuemin="0" aria-valuemax="3" aria-valuenow="1" aria-valuetext="Step 2 of 3"><span style="width:58%"></span></div>
+    <p class="t-small t-muted mt-2">Step 2 of 3 · about 5 seconds left</p>
+
+    <ol class="card divided checklist mt-6" aria-label="What the AI is doing">
+      <li class="is-done">
+        <span class="check-ico"><svg class="icon-sm" aria-hidden="true" focusable="false" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256" fill="currentColor"><path d="M232.49,80.49l-128,128a12,12,0,0,1-17,0l-56-56a12,12,0,1,1,17-17L96,183,215.51,63.51a12,12,0,0,1,17,17Z"/></svg></span>
+        <div><div class="check-head"><p class="check-title">Read the pack</p><span class="status status--done">2.4 s</span></div><p class="mt-1.5"><span class="model model--nemotron">Nemotron VL</span></p>
+          <p class="t-small t-muted mt-2">Paracetamol 125 mg/5 ml · SyneCare · batch <strong class="text-text nowrap">L220008</strong></p></div></li>
+      <li class="is-active" aria-current="step">
+        <span class="check-ico"><svg class="icon-sm" aria-hidden="true" focusable="false" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256" fill="currentColor"><path d="M229.66,218.34l-50.07-50.06a88.11,88.11,0,1,0-11.31,11.31l50.06,50.07a8,8,0,0,0,11.32-11.32ZM40,112a72,72,0,1,1,72,72A72.08,72.08,0,0,1,40,112Z"/></svg></span>
+        <div><div class="check-head"><p class="check-title">Searching FDA alerts</p><span class="status status--run"><svg class="icon-xs spin" aria-hidden="true" focusable="false" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256" fill="currentColor"><path d="M232,128a104,104,0,0,1-208,0c0-41,23.81-78.36,60.66-95.27a8,8,0,0,1,6.68,14.54C60.15,61.59,40,93.27,40,128a88,88,0,0,0,176,0c0-34.73-20.15-66.41-51.34-80.73a8,8,0,0,1,6.68-14.54C208.19,49.64,232,87,232,128Z"/></svg> 2.2 s</span></div><p class="mt-1.5"><span class="model model--tavily">Tavily Search</span></p>
+          <div class="well p-3 mt-2"><p class="t-mono t-muted">site:fdaghana.gov.gh</p>
+            <p class="t-small mt-1.5 flex items-center gap-1.5"><svg class="icon-xs text-ok-fg" aria-hidden="true" focusable="false" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256" fill="currentColor"><path d="M229.66,77.66l-128,128a8,8,0,0,1-11.32,0l-56-56a8,8,0,0,1,11.32-11.32L96,188.69,218.34,66.34a8,8,0,0,1,11.32,11.32Z"/></svg> Safety alert found</p>
+            <span class="skeleton w-32 h-3 mt-2"></span></div></div></li>
+      <li class="is-pending">
+        <span class="check-ico"><svg class="icon-sm" aria-hidden="true" focusable="false" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256" fill="currentColor"><path d="M239.43,133l-32-80h0a8,8,0,0,0-9.16-4.84L136,62V40a8,8,0,0,0-16,0V65.58L54.26,80.19A8,8,0,0,0,48.57,85h0v.06L16.57,165a7.92,7.92,0,0,0-.57,3c0,23.31,24.54,32,40,32s40-8.69,40-32a7.92,7.92,0,0,0-.57-3L66.92,93.77,120,82V208H104a8,8,0,0,0,0,16h48a8,8,0,0,0,0-16H136V78.42L187,67.1,160.57,133a7.92,7.92,0,0,0-.57,3c0,23.31,24.54,32,40,32s40-8.69,40-32A7.92,7.92,0,0,0,239.43,133ZM56,184c-7.53,0-22.76-3.61-23.93-14.64L56,109.54l23.93,59.82C78.76,180.39,63.53,184,56,184Zm144-32c-7.53,0-22.76-3.61-23.93-14.64L200,77.54l23.93,59.82C222.76,148.39,207.53,152,200,152Z"/></svg></span>
+        <div><div class="check-head"><p class="check-title">Match your batch</p><span class="status status--wait">Next</span></div><p class="mt-1.5"><span class="model model--nemotron">Nemotron 3 Super</span></p></div></li>
+    </ol>
+  </main>
+  <div class="gutter pb-6">
+    <div class="note"><svg class="icon-sm" aria-hidden="true" focusable="false" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256" fill="currentColor"><path d="M128,24A104,104,0,1,0,232,128,104.11,104.11,0,0,0,128,24Zm0,192a88,88,0,1,1,88-88A88.1,88.1,0,0,1,128,216Zm16-40a8,8,0,0,1-8,8,16,16,0,0,1-16-16V128a8,8,0,0,1,0-16,16,16,0,0,1,16,16v40A8,8,0,0,1,144,176ZM112,84a12,12,0,1,1,12,12A12,12,0,0,1,112,84Z"/></svg><div><strong>While you wait</strong><p>Don’t take or give this medicine until you see the answer.</p></div></div>
+  </div>
+</div>
+</body>
+</html>

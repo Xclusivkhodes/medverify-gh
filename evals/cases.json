@@ -1,0 +1,307 @@
+[
+  {
+    "id": "procold-be250",
+    "note": "Public Ghana FDA recall. Batch BE250 is listed.",
+    "input": {
+      "productName": "Procold Suspension",
+      "manufacturer": "Fredun Pharmaceuticals Limited",
+      "batch": "BE250",
+      "expiry": "04/2025",
+      "registrationNumber": ""
+    },
+    "expected": {
+      "verdict": "alert_match",
+      "flagCodesIncludes": ["batch_on_alert", "expired"],
+      "flagCodesExcludes": ["misspelling"],
+      "evidenceHostIncludes": "fdaghana.gov.gh",
+      "summaryMustMatch": ["do not use", "caked|substandard"],
+      "evidenceRole": "match"
+    }
+  },
+  {
+    "id": "procold-batch-only",
+    "note": "Distinctive batch alone should still surface the recall.",
+    "input": {
+      "productName": "",
+      "batch": "BE-250",
+      "expiry": "04/2025",
+      "registrationNumber": "RG-1"
+    },
+    "expected": {
+      "verdict": "alert_match",
+      "flagCodesIncludes": ["batch_on_alert", "missing_product_name"],
+      "evidenceHostIncludes": "fdaghana.gov.gh",
+      "summaryMustMatch": ["do not use"]
+    }
+  },
+  {
+    "id": "procold-other-batch",
+    "note": "Same product name, batch not on the recall. Must not be an all-clear.",
+    "input": {
+      "productName": "Procold Syrup",
+      "manufacturer": "Unknown",
+      "batch": "BE999",
+      "expiry": "2028-04",
+      "registrationNumber": "RG-20441"
+    },
+    "expected": {
+      "verdict": "red_flags",
+      "flagCodesIncludes": ["name_on_alert"],
+      "flagCodesExcludes": ["batch_on_alert", "expired"],
+      "evidenceHostIncludes": "fdaghana.gov.gh",
+      "summaryMustMatch": ["pharmacist"]
+    }
+  },
+  {
+    "id": "dostinex-gg2440",
+    "note": "Public falsified-medicine alert, including a non-English label note.",
+    "input": {
+      "productName": "Dostinex 0.5 mg Tablets",
+      "batch": "GG2440",
+      "otherText": "Label text is not in English."
+    },
+    "expected": {
+      "verdict": "alert_match",
+      "flagCodesIncludes": ["batch_on_alert", "non_english_label"],
+      "evidenceHostIncludes": "fdaghana.gov.gh",
+      "summaryMustMatch": ["do not use", "GG2440|English"]
+    }
+  },
+  {
+    "id": "dostinex-other-batch",
+    "note": "Brand is on a falsified alert but this batch is not listed.",
+    "input": {
+      "productName": "Dostinex",
+      "batch": "GG0001",
+      "expiry": "2027-08",
+      "registrationNumber": "RG-55"
+    },
+    "expected": {
+      "verdict": "red_flags",
+      "flagCodesIncludes": ["name_on_alert"],
+      "flagCodesExcludes": ["batch_on_alert"],
+      "evidenceHostIncludes": "fdaghana.gov.gh"
+    }
+  },
+  {
+    "id": "para-clear-batch",
+    "note": "Public substandard paracetamol suspension alert.",
+    "input": {
+      "productName": "Para Clear Suspension 125",
+      "manufacturer": "SyneCare",
+      "batch": "L220008",
+      "expiry": "12/2024",
+      "registrationNumber": ""
+    },
+    "expected": {
+      "verdict": "alert_match",
+      "flagCodesIncludes": ["batch_on_alert"],
+      "evidenceHostIncludes": "fdaghana.gov.gh",
+      "summaryMustMatch": ["do not use"]
+    }
+  },
+  {
+    "id": "beltocin-alias",
+    "note": "FDA table spells Beltcoin. Press coverage used Beltocin. Alias should match.",
+    "input": {
+      "productName": "Beltocin Oxytocin Injection",
+      "batch": "GH-B3-50",
+      "expiry": "2026-01",
+      "registrationNumber": "RG-9"
+    },
+    "expected": {
+      "verdict": "alert_match",
+      "flagCodesIncludes": ["batch_on_alert"],
+      "evidenceHostIncludes": "fdaghana.gov.gh",
+      "summaryMustMatch": ["do not use"]
+    }
+  },
+  {
+    "id": "oxytocin-distinctive-batch",
+    "note": "Batch GH-B3-51 is distinctive enough to match even if the brand was left off.",
+    "input": {
+      "productName": "Oxytocin Injection",
+      "batch": "GH-B3-51",
+      "expiry": "2027-01",
+      "registrationNumber": "RG-9"
+    },
+    "expected": {
+      "verdict": "alert_match",
+      "flagCodesIncludes": ["batch_on_alert"],
+      "summaryMustMatch": ["do not use", "Beltcoin"]
+    }
+  },
+  {
+    "id": "venetocin-short-batch",
+    "note": "Batch 2014 is only a match when the product name agrees.",
+    "input": {
+      "productName": "Venetocin Oxytocin Injection BP",
+      "batch": "2014",
+      "expiry": "2024-03",
+      "registrationNumber": "RG-3"
+    },
+    "expected": {
+      "verdict": "alert_match",
+      "flagCodesIncludes": ["batch_on_alert"],
+      "summaryMustMatch": ["do not use"]
+    }
+  },
+  {
+    "id": "year-batch-not-oxytocin",
+    "note": "A short numeric batch must not collide with Venetocin.",
+    "input": {
+      "productName": "Vitamin C 500 mg Tablets",
+      "manufacturer": "Example Labs",
+      "batch": "2014",
+      "expiry": "2028-01",
+      "registrationNumber": "RG-2014"
+    },
+    "expected": {
+      "verdict": "no_alerts",
+      "flagCodesExcludes": ["batch_on_alert", "name_on_alert", "expired", "misspelling"],
+      "summaryMustMatch": ["does not show the pack is free of quality problems"]
+    }
+  },
+  {
+    "id": "ryverna-skhl2",
+    "note": "Public recalls table row. Reason text is intentionally cautious.",
+    "input": {
+      "productName": "Ryverna 10mg/ml solution",
+      "batch": "SKHL2",
+      "expiry": "06/2024",
+      "registrationNumber": "RG-7"
+    },
+    "expected": {
+      "verdict": "alert_match",
+      "flagCodesIncludes": ["batch_on_alert", "expired"],
+      "summaryMustMatch": ["do not use", "reason"]
+    }
+  },
+  {
+    "id": "healmoxy",
+    "note": "WHO brand alert. Must not be treated as all amoxicillin.",
+    "input": {
+      "productName": "HEALMOXY capsules 500mg",
+      "batch": "HM-1",
+      "expiry": "2027-05",
+      "registrationNumber": "RG-8"
+    },
+    "expected": {
+      "verdict": "alert_match",
+      "flagCodesExcludes": ["batch_on_alert"],
+      "evidenceHostIncludes": "who.int",
+      "summaryMustMatch": ["do not use", "HEALMOXY"]
+    }
+  },
+  {
+    "id": "ordinary-amoxicillin",
+    "note": "A normal amoxicillin name must not inherit the HEALMOXY alert.",
+    "input": {
+      "productName": "Amoxicillin 500 mg Capsules",
+      "manufacturer": "Example Pharma",
+      "batch": "AM-44120",
+      "expiry": "2028-09",
+      "registrationNumber": "RG-44120"
+    },
+    "expected": {
+      "verdict": "no_alerts",
+      "flagCodesExcludes": ["batch_on_alert", "name_on_alert", "misspelling"],
+      "summaryMustMatch": ["does not show the pack is free of quality problems"]
+    }
+  },
+  {
+    "id": "coldrif",
+    "note": "WHO contaminated oral-liquid alert, name-level.",
+    "input": {
+      "productName": "COLDRIF syrup",
+      "batch": "CR-1",
+      "expiry": "2027-02",
+      "registrationNumber": "RG-2"
+    },
+    "expected": {
+      "verdict": "alert_match",
+      "evidenceHostIncludes": "who.int",
+      "summaryMustMatch": ["do not use", "diethylene|contaminated"]
+    }
+  },
+  {
+    "id": "fictional-misspelling",
+    "note": "Invented label with spelling, expiry, and registration problems.",
+    "input": {
+      "productName": "Amoxcilin 500mg Capusles",
+      "manufacturer": "BestCare Pharma",
+      "batch": "BX-1092",
+      "expiry": "01/2024",
+      "registrationNumber": ""
+    },
+    "expected": {
+      "verdict": "red_flags",
+      "flagCodesIncludes": ["misspelling", "expired", "missing_registration"],
+      "flagCodesExcludes": ["batch_on_alert", "name_on_alert"],
+      "summaryMustMatch": ["pharmacist", "amoxicillin"]
+    }
+  },
+  {
+    "id": "harbour-no-alert",
+    "note": "Fictional pack. Placeholder registration must not be described as real.",
+    "input": {
+      "productName": "Harbour Paracetamol 500 mg Tablets",
+      "manufacturer": "Harbour Labs",
+      "batch": "HB-88421",
+      "expiry": "2028-06",
+      "registrationNumber": "DEMO-FDA-10442"
+    },
+    "expected": {
+      "verdict": "no_alerts",
+      "flagCodesExcludes": ["expired", "misspelling", "batch_on_alert", "name_on_alert", "missing_registration"],
+      "summaryMustMatch": ["does not show the pack is free of quality problems", "demonstration placeholder"]
+    }
+  },
+  {
+    "id": "missing-registration-only",
+    "note": "Complete otherwise, but no FDA number. That is a red flag, not an all-clear.",
+    "input": {
+      "productName": "Harbour Paracetamol 500 mg Tablets",
+      "manufacturer": "Harbour Labs",
+      "batch": "HB-10001",
+      "expiry": "2028-06",
+      "registrationNumber": ""
+    },
+    "expected": {
+      "verdict": "red_flags",
+      "flagCodesIncludes": ["missing_registration"],
+      "flagCodesExcludes": ["expired", "name_on_alert"]
+    }
+  },
+  {
+    "id": "search-failed-blocks-clear",
+    "note": "A failed live search must not become no alerts found.",
+    "input": {
+      "productName": "Harbour Paracetamol 500 mg Tablets",
+      "manufacturer": "Harbour Labs",
+      "batch": "HB-88421",
+      "expiry": "2028-06",
+      "registrationNumber": "RG-10442",
+      "evidenceSearchFailed": true
+    },
+    "expected": {
+      "verdict": "red_flags",
+      "flagCodesIncludes": ["evidence_search_failed"],
+      "summaryMustMatch": ["all-clear|did not finish|search"]
+    }
+  },
+  {
+    "id": "unreadable-expiry",
+    "note": "Garbage expiry is a red flag.",
+    "input": {
+      "productName": "Harbour Paracetamol 500 mg Tablets",
+      "batch": "HB-22",
+      "expiry": "soonish",
+      "registrationNumber": "RG-22"
+    },
+    "expected": {
+      "verdict": "red_flags",
+      "flagCodesIncludes": ["expiry_unreadable"]
+    }
+  }
+]

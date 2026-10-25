@@ -1,0 +1,57 @@
+<!doctype html>
+<html lang="en">
+<head>
+{{inc:head.html}}
+<title>States — MedVerify GH</title>
+</head>
+<body>
+<div class="app">
+  <header class="topbar"><p class="topbar-title">States</p>{{inc:toggle.html}}</header>
+  <main class="gutter pt-6 pb-10 grid gap-8">
+    <section aria-label="Can't read the batch">
+      <p class="t-eyebrow mb-3">Can’t read the batch</p>
+      <div class="card p-5">
+        <div class="flex gap-4 items-start">
+          <span class="thumb" style="filter:blur(1.6px)">{{inc:pack.html}}</span>
+          <div><p class="t-label">We can’t read the batch number</p><p class="t-small t-muted mt-1">Move closer, add light, hold still. We won’t guess it.</p></div>
+        </div>
+        <div class="grid grid-cols-2 gap-3 mt-5">
+          <a href="#" class="btn btn-primary">{{i:camera icon-sm}} Retake</a>
+          <a href="#" class="btn btn-outline">{{i:keyboard icon-sm}} Type it</a>
+        </div>
+      </div>
+    </section>
+    <section aria-label="Slow network">
+      <p class="t-eyebrow mb-3">Slow network (after 8 s)</p>
+      <div class="note note--warn">{{i:clock icon-sm}}<div><strong>Still checking…</strong><p>Your network is slow. Keep this page open. Don’t take the medicine yet.</p></div></div>
+    </section>
+    <section aria-label="Offline">
+      <p class="t-eyebrow mb-3">Offline</p>
+      <div class="card p-6 text-center">
+        <span class="mx-auto w-14 h-14 rounded-full border border-border grid place-items-center text-text-muted">{{i:wifi-slash icon-lg}}</span>
+        <p class="t-h3 mt-4">No internet right now</p>
+        <p class="t-muted mt-1">We saved your photo on this phone. We’ll check it when you’re back online.</p>
+        <div class="note mt-5 text-left">{{i:info icon-sm}}<div><strong>Until then</strong><p>Ask your pharmacist, or call the FDA on <span class="nowrap">055 111 2224</span>.</p></div></div>
+      </div>
+    </section>
+    <section aria-label="Error">
+      <p class="t-eyebrow mb-3">Error · FDA search failed</p>
+      <div class="card">
+        <ol class="divided checklist">
+          <li class="is-done"><span class="check-ico">{{i:check-bold icon-sm}}</span><div><div class="check-head"><p class="check-title">Read the pack</p><span class="status status--done">2.4 s</span></div></div></li>
+          <li class="is-fail"><span class="check-ico">{{i:x-bold icon-sm}}</span><div><div class="check-head"><p class="check-title">FDA search didn’t answer</p><span class="status status--fail">Failed</span></div><p class="t-small t-muted mt-1">Tavily took too long. We won’t give an answer without the FDA pages.</p></div></li>
+        </ol>
+        <div class="px-5 pb-5"><a href="#" class="btn btn-primary btn-block">{{i:arrow-clockwise icon-sm}} Try again</a></div>
+      </div>
+    </section>
+    <section aria-label="Low confidence">
+      <p class="t-eyebrow mb-3">Low confidence</p>
+      <div class="verdict verdict--unsure" role="status">
+        <div class="verdict-head"><span class="verdict-ico">{{i:question-fill icon-lg}}</span><p class="t-h2">We’re not sure</p></div>
+        <div class="verdict-body !py-4"><p>Treat it as <strong>Check first</strong>. Show the pack to a pharmacist before you use it.</p></div>
+      </div>
+    </section>
+  </main>
+</div>
+</body>
+</html>

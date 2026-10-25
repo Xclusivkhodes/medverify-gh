@@ -1,0 +1,48 @@
+<!doctype html>
+<html lang="en">
+<head>
+{{inc:head.html}}
+<title>Photograph the pack — MedVerify GH</title>
+</head>
+<body>
+<div class="app">
+  <header class="topbar">
+    <a href="landing.html" class="btn btn-icon btn-plain -ml-3" aria-label="Back">{{i:arrow-left icon}}</a>
+    <p class="topbar-title">Check a medicine</p>
+    {{inc:toggle.html}}
+  </header>
+  <main class="gutter pt-5 pb-6 flex-1">
+    <nav class="tabs" role="tablist" aria-label="How do you want to add the medicine?">
+      <a role="tab" aria-selected="true" href="#">{{i:camera icon-sm}}Photo</a>
+      <a role="tab" aria-selected="false" href="#">{{i:upload-simple icon-sm}}Upload</a>
+      <a role="tab" aria-selected="false" href="#">{{i:keyboard icon-sm}}Type</a>
+    </nav>
+
+    <div class="viewfinder mt-5" aria-label="Camera preview. Example pack in view.">
+      <span class="vf-frame" aria-hidden="true"></span>
+      <span class="vf-hint">{{i:barcode icon-xs}} Batch found · hold still</span>
+      <div class="w-full mt-6">{{inc:pack-scan.html}}</div>
+      <span class="tag-example absolute right-4 bottom-4">EXAMPLE</span>
+    </div>
+
+    <div class="mt-5" aria-live="polite">
+      <p class="t-small t-muted">We can read</p>
+      <div class="flex flex-wrap gap-2 mt-2">
+        <span class="chip chip--read">{{i:check icon-xs}} Para Clear 125</span>
+        <span class="chip chip--read">{{i:check icon-xs}} Batch L220008</span>
+        <span class="chip chip--read">{{i:check icon-xs}} Exp 12/2024</span>
+      </div>
+    </div>
+
+    <div class="note mt-6">{{i:lightbulb icon-sm}}<div><strong>Can’t find the batch?</strong><p>Look near the expiry date, often on the end flap or the bottom of the bottle. It may say <span class="t-mono">B.No</span>, <span class="t-mono">LOT</span> or <span class="t-mono">Batch</span>.</p></div></div>
+  </main>
+  <div class="bottom-bar">
+    <div class="flex items-center gap-3">
+      <a href="#" class="btn btn-outline btn-icon !w-[52px] !h-[52px]" aria-label="Turn on flash">{{i:lightning icon}}</a>
+      <a href="analysing.html" class="btn btn-primary btn-lg flex-1">Check medicine {{i:arrow-right icon-sm}}</a>
+    </div>
+    <p class="t-small t-subtle text-center mt-2 flex items-center justify-center gap-1.5">{{i:lock-simple icon-xs}} About 10 seconds · Photo not stored</p>
+  </div>
+</div>
+</body>
+</html>

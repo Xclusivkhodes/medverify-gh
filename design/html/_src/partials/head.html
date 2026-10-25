@@ -1,0 +1,29 @@
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="color-scheme" content="light dark">
+<meta name="theme-color" content="#FFFFFF" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#18181B" media="(prefers-color-scheme: dark)">
+<script>
+/* Theme: OS setting by default; the toggle stores 'light' | 'dark' in localStorage('mv-theme').
+   Runs before paint so there is no flash. ?theme=dark|light previews a theme without saving it. */
+(function () {
+  try {
+    var q = new URLSearchParams(location.search).get('theme');
+    var t = (q === 'light' || q === 'dark') ? q : localStorage.getItem('mv-theme');
+    if (t === 'light' || t === 'dark') document.documentElement.setAttribute('data-theme', t);
+  } catch (e) {}
+})();
+function mvToggleTheme() {
+  var d = document.documentElement;
+  var cur = d.getAttribute('data-theme') || (matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
+  var next = cur === 'dark' ? 'light' : 'dark';
+  d.setAttribute('data-theme', next);
+  try { localStorage.setItem('mv-theme', next); } catch (e) {}
+  document.querySelectorAll('.theme-toggle').forEach(function (b) { b.setAttribute('aria-label', next === 'dark' ? 'Use light mode' : 'Use dark mode'); });
+}
+</script>
+<link rel="icon" href="assets/logo/favicon.svg" type="image/svg+xml">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Onest:wght@400..700&family=Source+Sans+3:ital,wght@0,400..700;1,400&family=Geist+Mono:wght@400..600&display=swap">
+<link rel="stylesheet" href="assets/app.css">

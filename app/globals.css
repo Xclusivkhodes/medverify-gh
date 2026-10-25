@@ -1,0 +1,10 @@
+@import "./tokens.css";
+@import "./components.css";
+@import "./utilities.css";
+
+/* Self-hosted families from next/font. Tokens keep the role names. */
+html {
+  --font-display: var(--font-onest), "Onest", ui-sans-serif, system-ui, sans-serif;
+  --font-body: var(--font-source), "Source Sans 3", ui-sans-serif, system-ui, sans-serif;
+  --font-mono: var(--font-geist), "Geist Mono", ui-monospace, monospace;
+}

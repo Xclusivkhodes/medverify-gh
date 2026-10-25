@@ -1,0 +1,104 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="color-scheme" content="light dark">
+<meta name="theme-color" content="#FFFFFF" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#18181B" media="(prefers-color-scheme: dark)">
+<script>
+/* Theme: OS setting by default; the toggle stores 'light' | 'dark' in localStorage('mv-theme').
+   Runs before paint so there is no flash. ?theme=dark|light previews a theme without saving it. */
+(function () {
+  try {
+    var q = new URLSearchParams(location.search).get('theme');
+    var t = (q === 'light' || q === 'dark') ? q : localStorage.getItem('mv-theme');
+    if (t === 'light' || t === 'dark') document.documentElement.setAttribute('data-theme', t);
+  } catch (e) {}
+})();
+function mvToggleTheme() {
+  var d = document.documentElement;
+  var cur = d.getAttribute('data-theme') || (matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
+  var next = cur === 'dark' ? 'light' : 'dark';
+  d.setAttribute('data-theme', next);
+  try { localStorage.setItem('mv-theme', next); } catch (e) {}
+  document.querySelectorAll('.theme-toggle').forEach(function (b) { b.setAttribute('aria-label', next === 'dark' ? 'Use light mode' : 'Use dark mode'); });
+}
+</script>
+<link rel="icon" href="assets/logo/favicon.svg" type="image/svg+xml">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Onest:wght@400..700&family=Source+Sans+3:ital,wght@0,400..700;1,400&family=Geist+Mono:wght@400..600&display=swap">
+<link rel="stylesheet" href="assets/app.css">
+
+<title>Photograph the pack — MedVerify GH</title>
+</head>
+<body>
+<div class="app">
+  <header class="topbar">
+    <a href="landing.html" class="btn btn-icon btn-plain -ml-3" aria-label="Back"><svg class="icon" aria-hidden="true" focusable="false" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256" fill="currentColor"><path d="M224,128a8,8,0,0,1-8,8H59.31l58.35,58.34a8,8,0,0,1-11.32,11.32l-72-72a8,8,0,0,1,0-11.32l72-72a8,8,0,0,1,11.32,11.32L59.31,120H216A8,8,0,0,1,224,128Z"/></svg></a>
+    <p class="topbar-title">Check a medicine</p>
+    <button type="button" class="btn btn-outline btn-icon theme-toggle" onclick="mvToggleTheme()" aria-label="Change light or dark mode"><svg class="icon-sm i-moon" aria-hidden="true" focusable="false" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256" fill="currentColor"><path d="M233.54,142.23a8,8,0,0,0-8-2,88.08,88.08,0,0,1-109.8-109.8,8,8,0,0,0-10-10,104.84,104.84,0,0,0-52.91,37A104,104,0,0,0,136,224a103.09,103.09,0,0,0,62.52-20.88,104.84,104.84,0,0,0,37-52.91A8,8,0,0,0,233.54,142.23ZM188.9,190.34A88,88,0,0,1,65.66,67.11a89,89,0,0,1,31.4-26A106,106,0,0,0,96,56,104.11,104.11,0,0,0,200,160a106,106,0,0,0,14.92-1.06A89,89,0,0,1,188.9,190.34Z"/></svg><svg class="icon-sm i-sun" aria-hidden="true" focusable="false" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256" fill="currentColor"><path d="M120,40V16a8,8,0,0,1,16,0V40a8,8,0,0,1-16,0Zm72,88a64,64,0,1,1-64-64A64.07,64.07,0,0,1,192,128Zm-16,0a48,48,0,1,0-48,48A48.05,48.05,0,0,0,176,128ZM58.34,69.66A8,8,0,0,0,69.66,58.34l-16-16A8,8,0,0,0,42.34,53.66Zm0,116.68-16,16a8,8,0,0,0,11.32,11.32l16-16a8,8,0,0,0-11.32-11.32ZM192,72a8,8,0,0,0,5.66-2.34l16-16a8,8,0,0,0-11.32-11.32l-16,16A8,8,0,0,0,192,72Zm5.66,114.34a8,8,0,0,0-11.32,11.32l16,16a8,8,0,0,0,11.32-11.32ZM48,128a8,8,0,0,0-8-8H16a8,8,0,0,0,0,16H40A8,8,0,0,0,48,128Zm80,80a8,8,0,0,0-8,8v24a8,8,0,0,0,16,0V216A8,8,0,0,0,128,208Zm112-88H216a8,8,0,0,0,0,16h24a8,8,0,0,0,0-16Z"/></svg></button>
+
+  </header>
+  <main class="gutter pt-5 pb-6 flex-1">
+    <nav class="tabs" role="tablist" aria-label="How do you want to add the medicine?">
+      <a role="tab" aria-selected="true" href="#"><svg class="icon-sm" aria-hidden="true" focusable="false" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256" fill="currentColor"><path d="M208,56H180.28L166.65,35.56A8,8,0,0,0,160,32H96a8,8,0,0,0-6.65,3.56L75.71,56H48A24,24,0,0,0,24,80V192a24,24,0,0,0,24,24H208a24,24,0,0,0,24-24V80A24,24,0,0,0,208,56Zm8,136a8,8,0,0,1-8,8H48a8,8,0,0,1-8-8V80a8,8,0,0,1,8-8H80a8,8,0,0,0,6.66-3.56L100.28,48h55.43l13.63,20.44A8,8,0,0,0,176,72h32a8,8,0,0,1,8,8ZM128,88a44,44,0,1,0,44,44A44.05,44.05,0,0,0,128,88Zm0,72a28,28,0,1,1,28-28A28,28,0,0,1,128,160Z"/></svg>Photo</a>
+      <a role="tab" aria-selected="false" href="#"><svg class="icon-sm" aria-hidden="true" focusable="false" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256" fill="currentColor"><path d="M224,144v64a8,8,0,0,1-8,8H40a8,8,0,0,1-8-8V144a8,8,0,0,1,16,0v56H208V144a8,8,0,0,1,16,0ZM93.66,77.66,120,51.31V144a8,8,0,0,0,16,0V51.31l26.34,26.35a8,8,0,0,0,11.32-11.32l-40-40a8,8,0,0,0-11.32,0l-40,40A8,8,0,0,0,93.66,77.66Z"/></svg>Upload</a>
+      <a role="tab" aria-selected="false" href="#"><svg class="icon-sm" aria-hidden="true" focusable="false" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256" fill="currentColor"><path d="M224,48H32A16,16,0,0,0,16,64V192a16,16,0,0,0,16,16H224a16,16,0,0,0,16-16V64A16,16,0,0,0,224,48Zm0,144H32V64H224V192Zm-16-64a8,8,0,0,1-8,8H56a8,8,0,0,1,0-16H200A8,8,0,0,1,208,128Zm0-32a8,8,0,0,1-8,8H56a8,8,0,0,1,0-16H200A8,8,0,0,1,208,96ZM72,160a8,8,0,0,1-8,8H56a8,8,0,0,1,0-16h8A8,8,0,0,1,72,160Zm96,0a8,8,0,0,1-8,8H96a8,8,0,0,1,0-16h64A8,8,0,0,1,168,160Zm40,0a8,8,0,0,1-8,8h-8a8,8,0,0,1,0-16h8A8,8,0,0,1,208,160Z"/></svg>Type</a>
+    </nav>
+
+    <div class="viewfinder mt-5" aria-label="Camera preview. Example pack in view.">
+      <span class="vf-frame" aria-hidden="true"></span>
+      <span class="vf-hint"><svg class="icon-xs" aria-hidden="true" focusable="false" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256" fill="currentColor"><path d="M232,48V88a8,8,0,0,1-16,0V56H184a8,8,0,0,1,0-16h40A8,8,0,0,1,232,48ZM72,200H40V168a8,8,0,0,0-16,0v40a8,8,0,0,0,8,8H72a8,8,0,0,0,0-16Zm152-40a8,8,0,0,0-8,8v32H184a8,8,0,0,0,0,16h40a8,8,0,0,0,8-8V168A8,8,0,0,0,224,160ZM32,96a8,8,0,0,0,8-8V56H72a8,8,0,0,0,0-16H32a8,8,0,0,0-8,8V88A8,8,0,0,0,32,96ZM80,80a8,8,0,0,0-8,8v80a8,8,0,0,0,16,0V88A8,8,0,0,0,80,80Zm104,88V88a8,8,0,0,0-16,0v80a8,8,0,0,0,16,0ZM144,80a8,8,0,0,0-8,8v80a8,8,0,0,0,16,0V88A8,8,0,0,0,144,80Zm-32,0a8,8,0,0,0-8,8v80a8,8,0,0,0,16,0V88A8,8,0,0,0,112,80Z"/></svg> Batch found · hold still</span>
+      <div class="w-full mt-6"><svg class="pack-svg pack-svg--scan" viewBox="0 0 260 170" role="img" aria-label="Example medicine carton: PARA CLEAR SUSPENSION 125, batch L220008, expiry 12/2024">
+  <defs>
+    <linearGradient id="pk2-f" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#FFFFFF"/><stop offset="1" stop-color="#EEF1F0"/></linearGradient>
+    <linearGradient id="pk2-s" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#D9DFDD"/><stop offset="1" stop-color="#C4CCCA"/></linearGradient>
+  </defs>
+  <path d="M214 22 L240 10 L240 140 L214 152Z" fill="url(#pk2-s)"/>
+  <path d="M20 22 L46 10 L240 10 L214 22Z" fill="#E4E9E8"/>
+  <rect x="20" y="22" width="194" height="130" fill="url(#pk2-f)"/>
+  <rect x="20" y="22" width="194" height="30" fill="#C8432B"/>
+  <path d="M20 52 h194" stroke="#E8E8EA" stroke-width="3"/>
+  <text x="32" y="42" font-family="Onest, sans-serif" font-weight="800" font-size="15" fill="#fff" letter-spacing=".02em">PARA CLEAR</text>
+  <text x="32" y="72" font-family="Source Sans 3, sans-serif" font-weight="700" font-size="11" fill="#2A2A2A">SUSPENSION 125</text>
+  <text x="32" y="86" font-family="Source Sans 3, sans-serif" font-size="8.5" fill="#555">Paracetamol Oral Suspension BP</text>
+  <text x="32" y="97" font-family="Source Sans 3, sans-serif" font-size="8.5" fill="#555">125 mg / 5 ml · 100 ml</text>
+  <circle cx="188" cy="76" r="14" fill="#FCE9E4"/><path d="M181 76h14M188 69v14" stroke="#C8432B" stroke-width="0" />
+  <text x="188" y="80" text-anchor="middle" font-family="Source Sans 3, sans-serif" font-weight="700" font-size="9" fill="#C8432B">125</text>
+  <g font-family="Geist Mono, monospace" font-size="8" fill="#333">
+    <text x="32" y="122">B.No : L220008</text>
+    <text x="32" y="133">MFG  : 01/2022</text>
+    <text x="32" y="144">EXP  : 12/2024</text>
+  </g>
+  <text x="206" y="144" text-anchor="end" font-family="Source Sans 3, sans-serif" font-size="7" fill="#777">SyneCare · Mumbai</text>
+  <rect x="26" y="111" width="90" height="38" rx="5" fill="rgba(95,205,195,.16)" stroke="#2BB1A6" stroke-width="2"/>
+  <rect x="122" y="121" width="66" height="18" rx="5" fill="#2BB1A6"/>
+  <text x="155" y="133.5" text-anchor="middle" font-family="Geist Mono, monospace" font-weight="600" font-size="8.5" fill="#042826">BATCH · EXP</text>
+</svg>
+</div>
+      <span class="tag-example absolute right-4 bottom-4">EXAMPLE</span>
+    </div>
+
+    <div class="mt-5" aria-live="polite">
+      <p class="t-small t-muted">We can read</p>
+      <div class="flex flex-wrap gap-2 mt-2">
+        <span class="chip chip--read"><svg class="icon-xs" aria-hidden="true" focusable="false" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256" fill="currentColor"><path d="M229.66,77.66l-128,128a8,8,0,0,1-11.32,0l-56-56a8,8,0,0,1,11.32-11.32L96,188.69,218.34,66.34a8,8,0,0,1,11.32,11.32Z"/></svg> Para Clear 125</span>
+        <span class="chip chip--read"><svg class="icon-xs" aria-hidden="true" focusable="false" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256" fill="currentColor"><path d="M229.66,77.66l-128,128a8,8,0,0,1-11.32,0l-56-56a8,8,0,0,1,11.32-11.32L96,188.69,218.34,66.34a8,8,0,0,1,11.32,11.32Z"/></svg> Batch L220008</span>
+        <span class="chip chip--read"><svg class="icon-xs" aria-hidden="true" focusable="false" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256" fill="currentColor"><path d="M229.66,77.66l-128,128a8,8,0,0,1-11.32,0l-56-56a8,8,0,0,1,11.32-11.32L96,188.69,218.34,66.34a8,8,0,0,1,11.32,11.32Z"/></svg> Exp 12/2024</span>
+      </div>
+    </div>
+
+    <div class="note mt-6"><svg class="icon-sm" aria-hidden="true" focusable="false" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256" fill="currentColor"><path d="M176,232a8,8,0,0,1-8,8H88a8,8,0,0,1,0-16h80A8,8,0,0,1,176,232Zm40-128a87.55,87.55,0,0,1-33.64,69.21A16.24,16.24,0,0,0,176,186v6a16,16,0,0,1-16,16H96a16,16,0,0,1-16-16v-6a16,16,0,0,0-6.23-12.66A87.59,87.59,0,0,1,40,104.49C39.74,56.83,78.26,17.14,125.88,16A88,88,0,0,1,216,104Zm-16,0a72,72,0,0,0-73.74-72c-39,.92-70.47,33.39-70.26,72.39a71.65,71.65,0,0,0,27.64,56.3A32,32,0,0,1,96,186v6h64v-6a32.15,32.15,0,0,1,12.47-25.35A71.65,71.65,0,0,0,200,104Zm-16.11-9.34a57.6,57.6,0,0,0-46.56-46.55,8,8,0,0,0-2.66,15.78c16.57,2.79,30.63,16.85,33.44,33.45A8,8,0,0,0,176,104a9,9,0,0,0,1.35-.11A8,8,0,0,0,183.89,94.66Z"/></svg><div><strong>Can’t find the batch?</strong><p>Look near the expiry date, often on the end flap or the bottom of the bottle. It may say <span class="t-mono">B.No</span>, <span class="t-mono">LOT</span> or <span class="t-mono">Batch</span>.</p></div></div>
+  </main>
+  <div class="bottom-bar">
+    <div class="flex items-center gap-3">
+      <a href="#" class="btn btn-outline btn-icon !w-[52px] !h-[52px]" aria-label="Turn on flash"><svg class="icon" aria-hidden="true" focusable="false" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256" fill="currentColor"><path d="M215.79,118.17a8,8,0,0,0-5-5.66L153.18,90.9l14.66-73.33a8,8,0,0,0-13.69-7l-112,120a8,8,0,0,0,3,13l57.63,21.61L88.16,238.43a8,8,0,0,0,13.69,7l112-120A8,8,0,0,0,215.79,118.17ZM109.37,214l10.47-52.38a8,8,0,0,0-5-9.06L62,132.71l84.62-90.66L136.16,94.43a8,8,0,0,0,5,9.06l52.8,19.8Z"/></svg></a>
+      <a href="analysing.html" class="btn btn-primary btn-lg flex-1">Check medicine <svg class="icon-sm" aria-hidden="true" focusable="false" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256" fill="currentColor"><path d="M221.66,133.66l-72,72a8,8,0,0,1-11.32-11.32L196.69,136H40a8,8,0,0,1,0-16H196.69L138.34,61.66a8,8,0,0,1,11.32-11.32l72,72A8,8,0,0,1,221.66,133.66Z"/></svg></a>
+    </div>
+    <p class="t-small t-subtle text-center mt-2 flex items-center justify-center gap-1.5"><svg class="icon-xs" aria-hidden="true" focusable="false" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256" fill="currentColor"><path d="M208,80H176V56a48,48,0,0,0-96,0V80H48A16,16,0,0,0,32,96V208a16,16,0,0,0,16,16H208a16,16,0,0,0,16-16V96A16,16,0,0,0,208,80ZM96,56a32,32,0,0,1,64,0V80H96ZM208,208H48V96H208V208Z"/></svg> About 10 seconds · Photo not stored</p>
+  </div>
+</div>
+</body>
+</html>

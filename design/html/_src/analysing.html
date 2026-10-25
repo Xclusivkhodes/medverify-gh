@@ -1,0 +1,45 @@
+<!doctype html>
+<html lang="en">
+<head>
+{{inc:head.html}}
+<title>Checking… — MedVerify GH</title>
+</head>
+<body>
+<div class="app">
+  <header class="topbar">
+    <a href="input.html" class="btn btn-icon btn-plain -ml-3" aria-label="Cancel and go back">{{i:x icon}}</a>
+    <p class="topbar-title">Checking</p>
+    {{inc:toggle.html}}
+  </header>
+  <main class="gutter pt-6 pb-6 flex-1">
+    <div class="flex items-center gap-3">
+      <span class="thumb">{{inc:pack.html}}</span>
+      <div class="min-w-0"><p class="t-label">Para Clear Suspension 125</p><p class="t-small t-muted flex items-center gap-2 flex-wrap"><span class="t-mono nowrap">L220008 · 12/2024</span><span class="tag-example">EXAMPLE</span></p></div>
+    </div>
+
+    <div class="mt-8 flex items-baseline justify-between"><h1 class="t-h2" aria-live="polite">Checking FDA Ghana…</h1><span class="ms" aria-label="Time so far">4.6 s</span></div>
+    <div class="progress mt-3" role="progressbar" aria-valuemin="0" aria-valuemax="3" aria-valuenow="1" aria-valuetext="Step 2 of 3"><span style="width:58%"></span></div>
+    <p class="t-small t-muted mt-2">Step 2 of 3 · about 5 seconds left</p>
+
+    <ol class="card divided checklist mt-6" aria-label="What the AI is doing">
+      <li class="is-done">
+        <span class="check-ico">{{i:check-bold icon-sm}}</span>
+        <div><div class="check-head"><p class="check-title">Read the pack</p><span class="status status--done">2.4 s</span></div><p class="mt-1.5"><span class="model model--nemotron">Nemotron VL</span></p>
+          <p class="t-small t-muted mt-2">Paracetamol 125 mg/5 ml · SyneCare · batch <strong class="text-text nowrap">L220008</strong></p></div></li>
+      <li class="is-active" aria-current="step">
+        <span class="check-ico">{{i:magnifying-glass icon-sm}}</span>
+        <div><div class="check-head"><p class="check-title">Searching FDA alerts</p><span class="status status--run">{{i:circle-notch icon-xs spin}} 2.2 s</span></div><p class="mt-1.5"><span class="model model--tavily">Tavily Search</span></p>
+          <div class="well p-3 mt-2"><p class="t-mono t-muted">site:fdaghana.gov.gh</p>
+            <p class="t-small mt-1.5 flex items-center gap-1.5">{{i:check icon-xs text-ok-fg}} Safety alert found</p>
+            <span class="skeleton w-32 h-3 mt-2"></span></div></div></li>
+      <li class="is-pending">
+        <span class="check-ico">{{i:scales icon-sm}}</span>
+        <div><div class="check-head"><p class="check-title">Match your batch</p><span class="status status--wait">Next</span></div><p class="mt-1.5"><span class="model model--nemotron">Nemotron 3 Super</span></p></div></li>
+    </ol>
+  </main>
+  <div class="gutter pb-6">
+    <div class="note">{{i:info icon-sm}}<div><strong>While you wait</strong><p>Don’t take or give this medicine until you see the answer.</p></div></div>
+  </div>
+</div>
+</body>
+</html>

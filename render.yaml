@@ -1,0 +1,25 @@
+# Full Next.js app (pages + /api/verify). Demo mode is the default.
+# Live Nebius and Tavily stay off until you set DEMO_MODE=false and LLM_ENABLED=true
+# and add the two secrets in the Render dashboard.
+services:
+  - type: web
+    name: medverify-gh
+    runtime: docker
+    dockerfilePath: ./Dockerfile
+    healthCheckPath: /api/status
+    envVars:
+      - key: DEMO_MODE
+        value: "true"
+      - key: LLM_ENABLED
+        value: "false"
+      - key: BUDGET_USD
+        value: "1"
+      - key: NODE_ENV
+        value: production
+      # Set these only when you mean to spend credits:
+      # - key: NEBIUS_API_KEY
+      #   sync: false
+      # - key: TAVILY_API_KEY
+      #   sync: false
+      # - key: CORS_ORIGINS
+      #   value: https://your-app.vercel.app

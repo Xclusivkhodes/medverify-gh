@@ -1,0 +1,138 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="color-scheme" content="light dark">
+<meta name="theme-color" content="#FFFFFF" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#18181B" media="(prefers-color-scheme: dark)">
+<script>
+/* Theme: OS setting by default; the toggle stores 'light' | 'dark' in localStorage('mv-theme').
+   Runs before paint so there is no flash. ?theme=dark|light previews a theme without saving it. */
+(function () {
+  try {
+    var q = new URLSearchParams(location.search).get('theme');
+    var t = (q === 'light' || q === 'dark') ? q : localStorage.getItem('mv-theme');
+    if (t === 'light' || t === 'dark') document.documentElement.setAttribute('data-theme', t);
+  } catch (e) {}
+})();
+function mvToggleTheme() {
+  var d = document.documentElement;
+  var cur = d.getAttribute('data-theme') || (matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
+  var next = cur === 'dark' ? 'light' : 'dark';
+  d.setAttribute('data-theme', next);
+  try { localStorage.setItem('mv-theme', next); } catch (e) {}
+  document.querySelectorAll('.theme-toggle').forEach(function (b) { b.setAttribute('aria-label', next === 'dark' ? 'Use light mode' : 'Use dark mode'); });
+}
+</script>
+<link rel="icon" href="assets/logo/favicon.svg" type="image/svg+xml">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Onest:wght@400..700&family=Source+Sans+3:ital,wght@0,400..700;1,400&family=Geist+Mono:wght@400..600&display=swap">
+<link rel="stylesheet" href="assets/app.css">
+
+<title>MedVerify GH — Check medicines against FDA Ghana alerts (desktop)</title>
+</head>
+<body>
+<div class="min-h-screen bg-bg">
+  <header class="relative border-b border-border bg-surface before:absolute before:inset-x-0 before:top-0 before:h-[2px] before:bg-primary">
+    <div class="max-w-content mx-auto px-12 h-[72px] flex items-center justify-between">
+      <span><img src="assets/logo/lockup-light.svg" alt="MedVerify GH" class="only-light h-8 w-auto"><img src="assets/logo/lockup-dark.svg" alt="MedVerify GH" class="only-dark h-8 w-auto"></span>
+      <nav class="flex items-center gap-1" aria-label="Main">
+        <a class="btn btn-plain !text-text" href="#how">How it works</a>
+        <a class="btn btn-plain !text-text" href="#pharm">For pharmacists</a>
+        <a class="btn btn-plain !text-text" href="#ai">Our AI</a>
+        <div class="lang ml-3" role="group" aria-label="Language"><button aria-pressed="true">EN</button><button aria-pressed="false" lang="tw">Twi</button></div>
+        <span class="ml-2"><button type="button" class="btn btn-outline btn-icon theme-toggle" onclick="mvToggleTheme()" aria-label="Change light or dark mode"><svg class="icon-sm i-moon" aria-hidden="true" focusable="false" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256" fill="currentColor"><path d="M233.54,142.23a8,8,0,0,0-8-2,88.08,88.08,0,0,1-109.8-109.8,8,8,0,0,0-10-10,104.84,104.84,0,0,0-52.91,37A104,104,0,0,0,136,224a103.09,103.09,0,0,0,62.52-20.88,104.84,104.84,0,0,0,37-52.91A8,8,0,0,0,233.54,142.23ZM188.9,190.34A88,88,0,0,1,65.66,67.11a89,89,0,0,1,31.4-26A106,106,0,0,0,96,56,104.11,104.11,0,0,0,200,160a106,106,0,0,0,14.92-1.06A89,89,0,0,1,188.9,190.34Z"/></svg><svg class="icon-sm i-sun" aria-hidden="true" focusable="false" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256" fill="currentColor"><path d="M120,40V16a8,8,0,0,1,16,0V40a8,8,0,0,1-16,0Zm72,88a64,64,0,1,1-64-64A64.07,64.07,0,0,1,192,128Zm-16,0a48,48,0,1,0-48,48A48.05,48.05,0,0,0,176,128ZM58.34,69.66A8,8,0,0,0,69.66,58.34l-16-16A8,8,0,0,0,42.34,53.66Zm0,116.68-16,16a8,8,0,0,0,11.32,11.32l16-16a8,8,0,0,0-11.32-11.32ZM192,72a8,8,0,0,0,5.66-2.34l16-16a8,8,0,0,0-11.32-11.32l-16,16A8,8,0,0,0,192,72Zm5.66,114.34a8,8,0,0,0-11.32,11.32l16,16a8,8,0,0,0,11.32-11.32ZM48,128a8,8,0,0,0-8-8H16a8,8,0,0,0,0,16H40A8,8,0,0,0,48,128Zm80,80a8,8,0,0,0-8,8v24a8,8,0,0,0,16,0V216A8,8,0,0,0,128,208Zm112-88H216a8,8,0,0,0,0,16h24a8,8,0,0,0,0-16Z"/></svg></button>
+</span>
+      </nav>
+    </div>
+  </header>
+  <main>
+    <section class="max-w-content mx-auto px-12 pt-16 pb-20 grid grid-cols-[1.05fr_.95fr] gap-20 items-center">
+      <div>
+        <p class="t-eyebrow">FDA Ghana alerts, recalls &amp; register · Free</p>
+        <h1 class="t-display !text-[3.5rem] !leading-[1.05] mt-4">Check the batch,<br>not the box.</h1>
+        <p class="t-body-lg t-muted mt-6 max-w-[38ch]">Photograph the pack or type the batch. In about 10 seconds you’ll see any FDA Ghana alert, why it matters, and what to do.</p>
+        <div class="card p-6 mt-10 max-w-[600px]">
+          <div class="dropzone p-5 flex items-center gap-4">
+            <span class="w-12 h-12 rounded-full bg-primary-soft text-on-primary-soft grid place-items-center flex-none"><svg class="icon" aria-hidden="true" focusable="false" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256" fill="currentColor"><path d="M224,144v64a8,8,0,0,1-8,8H40a8,8,0,0,1-8-8V144a8,8,0,0,1,16,0v56H208V144a8,8,0,0,1,16,0ZM93.66,77.66,120,51.31V144a8,8,0,0,0,16,0V51.31l26.34,26.35a8,8,0,0,0,11.32-11.32l-40-40a8,8,0,0,0-11.32,0l-40,40A8,8,0,0,0,93.66,77.66Z"/></svg></span>
+            <div class="flex-1"><p class="t-label">Drop a photo of the pack</p><p class="t-small t-muted">Or press <kbd>Ctrl</kbd> + <kbd>V</kbd>. Batch and expiry in view.</p></div>
+            <a href="input.html" class="btn btn-outline">Choose file</a>
+          </div>
+          <div class="flex items-end gap-3 mt-5">
+            <div class="flex-1"><label for="nm" class="field-label">Or type the name</label><input id="nm" class="input" placeholder="e.g. Para Clear 125"></div>
+            <div class="w-[150px]"><label for="bt" class="field-label">Batch</label><input id="bt" class="input t-mono" placeholder="L220008"></div>
+            <a href="analysing.html" class="btn btn-primary !min-h-[52px]">Check <svg class="icon-sm" aria-hidden="true" focusable="false" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256" fill="currentColor"><path d="M221.66,133.66l-72,72a8,8,0,0,1-11.32-11.32L196.69,136H40a8,8,0,0,1,0-16H196.69L138.34,61.66a8,8,0,0,1,11.32-11.32l72,72A8,8,0,0,1,221.66,133.66Z"/></svg></a>
+          </div>
+        </div>
+      </div>
+      <div class="grid gap-4" aria-label="Example result">
+        <div class="card p-3 flex items-center gap-3 max-w-[420px]">
+          <span class="thumb !w-[80px] !h-[58px]"><svg class="pack-svg" viewBox="0 0 260 170" role="img" aria-label="Example medicine carton: PARA CLEAR SUSPENSION 125, batch L220008, expiry 12/2024">
+  <defs>
+    <linearGradient id="pk2-f" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#FFFFFF"/><stop offset="1" stop-color="#EEF1F0"/></linearGradient>
+    <linearGradient id="pk2-s" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#D9DFDD"/><stop offset="1" stop-color="#C4CCCA"/></linearGradient>
+  </defs>
+  <path d="M214 22 L240 10 L240 140 L214 152Z" fill="url(#pk2-s)"/>
+  <path d="M20 22 L46 10 L240 10 L214 22Z" fill="#E4E9E8"/>
+  <rect x="20" y="22" width="194" height="130" fill="url(#pk2-f)"/>
+  <rect x="20" y="22" width="194" height="30" fill="#C8432B"/>
+  <path d="M20 52 h194" stroke="#E8E8EA" stroke-width="3"/>
+  <text x="32" y="42" font-family="Onest, sans-serif" font-weight="800" font-size="15" fill="#fff" letter-spacing=".02em">PARA CLEAR</text>
+  <text x="32" y="72" font-family="Source Sans 3, sans-serif" font-weight="700" font-size="11" fill="#2A2A2A">SUSPENSION 125</text>
+  <text x="32" y="86" font-family="Source Sans 3, sans-serif" font-size="8.5" fill="#555">Paracetamol Oral Suspension BP</text>
+  <text x="32" y="97" font-family="Source Sans 3, sans-serif" font-size="8.5" fill="#555">125 mg / 5 ml · 100 ml</text>
+  <circle cx="188" cy="76" r="14" fill="#FCE9E4"/><path d="M181 76h14M188 69v14" stroke="#C8432B" stroke-width="0" />
+  <text x="188" y="80" text-anchor="middle" font-family="Source Sans 3, sans-serif" font-weight="700" font-size="9" fill="#C8432B">125</text>
+  <g font-family="Geist Mono, monospace" font-size="8" fill="#333">
+    <text x="32" y="122">B.No : L220008</text>
+    <text x="32" y="133">MFG  : 01/2022</text>
+    <text x="32" y="144">EXP  : 12/2024</text>
+  </g>
+  <text x="206" y="144" text-anchor="end" font-family="Source Sans 3, sans-serif" font-size="7" fill="#777">SyneCare · Mumbai</text>
+</svg>
+</span>
+          <div><p class="t-label">Para Clear Suspension 125</p><p class="t-small t-muted t-mono">B.No L220008 · EXP 12/2024</p></div>
+          <span class="tag-example ml-auto self-start">EXAMPLE</span>
+        </div>
+        <section class="verdict verdict--scam !shadow-lg ml-10">
+          <div class="verdict-head"><span class="verdict-ico"><svg class="icon-xl" aria-hidden="true" focusable="false" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256" fill="currentColor"><path d="M227.31,80.23,175.77,28.69A16.13,16.13,0,0,0,164.45,24H91.55a16.13,16.13,0,0,0-11.32,4.69L28.69,80.23A16.13,16.13,0,0,0,24,91.55v72.9a16.13,16.13,0,0,0,4.69,11.32l51.54,51.54A16.13,16.13,0,0,0,91.55,232h72.9a16.13,16.13,0,0,0,11.32-4.69l51.54-51.54A16.13,16.13,0,0,0,232,164.45V91.55A16.13,16.13,0,0,0,227.31,80.23ZM120,80a8,8,0,0,1,16,0v56a8,8,0,0,1-16,0Zm8,104a12,12,0,1,1,12-12A12,12,0,0,1,128,184Z"/></svg></span><div><p class="verdict-kicker">FDA Ghana alert match</p><p class="t-verdict">Do not use</p></div><span class="ml-auto text-right font-semibold t-small">Exact batch<br><span class="t-h2 !text-inherit">98%</span></span></div>
+          <div class="verdict-body">
+            <p class="verdict-lead">FDA Ghana warns this batch contains ethylene glycol, a poison. Stop using it now.</p>
+            <div class="timing mt-5" aria-hidden="true"><span class="seg-nemotron" style="flex:2.4"></span><span class="seg-tavily" style="flex:1.9"></span><span class="seg-nemotron" style="flex:2.8"></span><span class="seg-app" style="flex:.3"></span></div>
+            <div class="flex flex-wrap gap-x-4 gap-y-1 mt-3"><span class="legend" style="--dot:var(--color-tool-nemotron)">Nemotron read &amp; matched</span><span class="legend" style="--dot:var(--color-tool-tavily)">Tavily found the FDA alert</span></div>
+          </div>
+        </section>
+      </div>
+    </section>
+
+    <section id="pharm" class="border-t border-border">
+      <div class="max-w-content mx-auto px-12 py-16 grid grid-cols-[.8fr_1.2fr] gap-16 items-start">
+        <div>
+          <p class="t-eyebrow">For pharmacists</p>
+          <h2 class="t-h1 mt-2">Check before you dispense.</h2>
+          <p class="t-body-lg t-muted mt-3">Check several batches at the counter. Every answer links the FDA Ghana notice, so you can show the patient.</p>
+          <ul class="mt-6 grid gap-3">
+            <li class="flex gap-3 items-start"><svg class="icon text-primary mt-0.5" aria-hidden="true" focusable="false" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256" fill="currentColor"><path d="M224,128a8,8,0,0,1-8,8H128a8,8,0,0,1,0-16h88A8,8,0,0,1,224,128ZM128,72h88a8,8,0,0,0,0-16H128a8,8,0,0,0,0,16Zm88,112H128a8,8,0,0,0,0,16h88a8,8,0,0,0,0-16ZM82.34,42.34,56,68.69,45.66,58.34A8,8,0,0,0,34.34,69.66l16,16a8,8,0,0,0,11.32,0l32-32A8,8,0,0,0,82.34,42.34Zm0,64L56,132.69,45.66,122.34a8,8,0,0,0-11.32,11.32l16,16a8,8,0,0,0,11.32,0l32-32a8,8,0,0,0-11.32-11.32Zm0,64L56,196.69,45.66,186.34a8,8,0,0,0-11.32,11.32l16,16a8,8,0,0,0,11.32,0l32-32a8,8,0,0,0-11.32-11.32Z"/></svg><span>Check up to 20 batches in one go</span></li>
+            <li class="flex gap-3 items-start"><svg class="icon text-primary mt-0.5" aria-hidden="true" focusable="false" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256" fill="currentColor"><path d="M213.66,82.34l-56-56A8,8,0,0,0,152,24H56A16,16,0,0,0,40,40V216a16,16,0,0,0,16,16H200a16,16,0,0,0,16-16V88A8,8,0,0,0,213.66,82.34ZM160,51.31,188.69,80H160ZM200,216H56V40h88V88a8,8,0,0,0,8,8h48V216Zm-32-80a8,8,0,0,1-8,8H96a8,8,0,0,1,0-16h64A8,8,0,0,1,168,136Zm0,32a8,8,0,0,1-8,8H96a8,8,0,0,1,0-16h64A8,8,0,0,1,168,168Z"/></svg><span>Print or share the FDA source</span></li>
+            <li class="flex gap-3 items-start"><svg class="icon text-primary mt-0.5" aria-hidden="true" focusable="false" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256" fill="currentColor"><path d="M222.37,158.46l-47.11-21.11-.13-.06a16,16,0,0,0-15.17,1.4,8.12,8.12,0,0,0-.75.56L134.87,160c-15.42-7.49-31.34-23.29-38.83-38.51l20.78-24.71c.2-.25.39-.5.57-.77a16,16,0,0,0,1.32-15.06l0-.12L97.54,33.64a16,16,0,0,0-16.62-9.52A56.26,56.26,0,0,0,32,80c0,79.4,64.6,144,144,144a56.26,56.26,0,0,0,55.88-48.92A16,16,0,0,0,222.37,158.46ZM176,208A128.14,128.14,0,0,1,48,80,40.2,40.2,0,0,1,82.87,40a.61.61,0,0,0,0,.12l21,47L83.2,111.86a6.13,6.13,0,0,0-.57.77,16,16,0,0,0-1,15.7c9.06,18.53,27.73,37.06,46.46,46.11a16,16,0,0,0,15.75-1.14,8.44,8.44,0,0,0,.74-.56L168.89,152l47,21.05h0s.08,0,.11,0A40.21,40.21,0,0,1,176,208Z"/></svg><span>Report to FDA: <strong class="nowrap">055 111 2224</strong></span></li>
+          </ul>
+        </div>
+        <div class="card overflow-hidden">
+          <div class="flex items-center justify-between px-5 py-4 border-b border-border"><p class="t-label">Batch check</p><span class="tag-example">EXAMPLE DATA</span></div>
+          <table class="tbl">
+            <thead><tr><th>Product</th><th>Batch</th><th>Result</th><th>Source</th></tr></thead>
+            <tbody>
+              <tr><td><strong>Para Clear Suspension 125</strong><br><span class="t-small t-muted">Paracetamol 125 mg/5 ml</span></td><td class="t-mono">L220008</td><td><span class="vchip vchip--scam"><svg class="icon-xs" aria-hidden="true" focusable="false" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256" fill="currentColor"><path d="M227.31,80.23,175.77,28.69A16.13,16.13,0,0,0,164.45,24H91.55a16.13,16.13,0,0,0-11.32,4.69L28.69,80.23A16.13,16.13,0,0,0,24,91.55v72.9a16.13,16.13,0,0,0,4.69,11.32l51.54,51.54A16.13,16.13,0,0,0,91.55,232h72.9a16.13,16.13,0,0,0,11.32-4.69l51.54-51.54A16.13,16.13,0,0,0,232,164.45V91.55A16.13,16.13,0,0,0,227.31,80.23ZM120,80a8,8,0,0,1,16,0v56a8,8,0,0,1-16,0Zm8,104a12,12,0,1,1,12-12A12,12,0,0,1,128,184Z"/></svg> Do not use</span></td><td><a href="https://fdaghana.gov.gh/safety-alert-substandard-paracetamol-suspension-received-from-republic-of-liberia/" class="font-semibold">FDA alert, Jun 2023</a></td></tr>
+              <tr><td><strong>Metformin/vildagliptin 50/1000</strong><br><span class="t-small t-muted">Imported pack, foreign label</span></td><td class="t-mono t-muted">unreadable</td><td><span class="vchip vchip--suspicious"><svg class="icon-xs" aria-hidden="true" focusable="false" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256" fill="currentColor"><path d="M236.8,188.09,149.35,36.22h0a24.76,24.76,0,0,0-42.7,0L19.2,188.09a23.51,23.51,0,0,0,0,23.72A24.35,24.35,0,0,0,40.55,224h174.9a24.35,24.35,0,0,0,21.33-12.19A23.51,23.51,0,0,0,236.8,188.09ZM120,104a8,8,0,0,1,16,0v40a8,8,0,0,1-16,0Zm8,88a12,12,0,1,1,12-12A12,12,0,0,1,128,192Z"/></svg> Check first</span></td><td><span class="t-small t-muted">Name matches an FDA notice</span></td></tr>
+              <tr><td><strong>Amoxicillin 500 mg capsules</strong><br><span class="t-small t-muted">Local manufacturer</span></td><td class="t-mono">AX23091</td><td><span class="vchip vchip--ok"><svg class="icon-xs" aria-hidden="true" focusable="false" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256" fill="currentColor"><path d="M128,24A104,104,0,1,0,232,128,104.11,104.11,0,0,0,128,24Zm45.66,85.66-56,56a8,8,0,0,1-11.32,0l-24-24a8,8,0,0,1,11.32-11.32L112,148.69l50.34-50.35a8,8,0,0,1,11.32,11.32Z"/></svg> No alerts found</span></td><td><span class="t-small t-muted">Searched 2 FDA lists</span></td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+  </main>
+</div>
+</body>
+</html>

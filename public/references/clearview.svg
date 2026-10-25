@@ -1,0 +1,9 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="320" height="200" viewBox="0 0 320 200" role="img" aria-label="Example reference card for ClearView eye drops">
+  <rect width="320" height="200" rx="16" fill="#F4F4F5"/>
+  <rect x="24" y="28" width="72" height="144" rx="28" fill="#FFFFFF" stroke="#0B7A73" stroke-width="3"/>
+  <rect x="48" y="44" width="24" height="16" rx="4" fill="#0B7A73"/>
+  <text x="116" y="72" fill="#18181B" font-family="Arial, sans-serif" font-size="20" font-weight="700">ClearView</text>
+  <text x="116" y="100" fill="#3F3F46" font-family="Arial, sans-serif" font-size="16">Eye drops</text>
+  <text x="116" y="132" fill="#0B7A73" font-family="ui-monospace, monospace" font-size="14">Example artwork</text>
+  <text x="116" y="156" fill="#71717A" font-family="Arial, sans-serif" font-size="12">Not a manufacturer photo</text>
+</svg>

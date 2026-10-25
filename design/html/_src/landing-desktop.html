@@ -1,0 +1,85 @@
+<!doctype html>
+<html lang="en">
+<head>
+{{inc:head.html}}
+<title>MedVerify GH — Check medicines against FDA Ghana alerts (desktop)</title>
+</head>
+<body>
+<div class="min-h-screen bg-bg">
+  <header class="relative border-b border-border bg-surface before:absolute before:inset-x-0 before:top-0 before:h-[2px] before:bg-primary">
+    <div class="max-w-content mx-auto px-12 h-[72px] flex items-center justify-between">
+      <span><img src="assets/logo/lockup-light.svg" alt="MedVerify GH" class="only-light h-8 w-auto"><img src="assets/logo/lockup-dark.svg" alt="MedVerify GH" class="only-dark h-8 w-auto"></span>
+      <nav class="flex items-center gap-1" aria-label="Main">
+        <a class="btn btn-plain !text-text" href="#how">How it works</a>
+        <a class="btn btn-plain !text-text" href="#pharm">For pharmacists</a>
+        <a class="btn btn-plain !text-text" href="#ai">Our AI</a>
+        <div class="lang ml-3" role="group" aria-label="Language"><button aria-pressed="true">EN</button><button aria-pressed="false" lang="tw">Twi</button></div>
+        <span class="ml-2">{{inc:toggle.html}}</span>
+      </nav>
+    </div>
+  </header>
+  <main>
+    <section class="max-w-content mx-auto px-12 pt-16 pb-20 grid grid-cols-[1.05fr_.95fr] gap-20 items-center">
+      <div>
+        <p class="t-eyebrow">FDA Ghana alerts, recalls &amp; register · Free</p>
+        <h1 class="t-display !text-[3.5rem] !leading-[1.05] mt-4">Check the batch,<br>not the box.</h1>
+        <p class="t-body-lg t-muted mt-6 max-w-[38ch]">Photograph the pack or type the batch. In about 10 seconds you’ll see any FDA Ghana alert, why it matters, and what to do.</p>
+        <div class="card p-6 mt-10 max-w-[600px]">
+          <div class="dropzone p-5 flex items-center gap-4">
+            <span class="w-12 h-12 rounded-full bg-primary-soft text-on-primary-soft grid place-items-center flex-none">{{i:upload-simple icon}}</span>
+            <div class="flex-1"><p class="t-label">Drop a photo of the pack</p><p class="t-small t-muted">Or press <kbd>Ctrl</kbd> + <kbd>V</kbd>. Batch and expiry in view.</p></div>
+            <a href="input.html" class="btn btn-outline">Choose file</a>
+          </div>
+          <div class="flex items-end gap-3 mt-5">
+            <div class="flex-1"><label for="nm" class="field-label">Or type the name</label><input id="nm" class="input" placeholder="e.g. Para Clear 125"></div>
+            <div class="w-[150px]"><label for="bt" class="field-label">Batch</label><input id="bt" class="input t-mono" placeholder="L220008"></div>
+            <a href="analysing.html" class="btn btn-primary !min-h-[52px]">Check {{i:arrow-right icon-sm}}</a>
+          </div>
+        </div>
+      </div>
+      <div class="grid gap-4" aria-label="Example result">
+        <div class="card p-3 flex items-center gap-3 max-w-[420px]">
+          <span class="thumb !w-[80px] !h-[58px]">{{inc:pack.html}}</span>
+          <div><p class="t-label">Para Clear Suspension 125</p><p class="t-small t-muted t-mono">B.No L220008 · EXP 12/2024</p></div>
+          <span class="tag-example ml-auto self-start">EXAMPLE</span>
+        </div>
+        <section class="verdict verdict--scam !shadow-lg ml-10">
+          <div class="verdict-head"><span class="verdict-ico">{{i:warning-octagon-fill icon-xl}}</span><div><p class="verdict-kicker">FDA Ghana alert match</p><p class="t-verdict">Do not use</p></div><span class="ml-auto text-right font-semibold t-small">Exact batch<br><span class="t-h2 !text-inherit">98%</span></span></div>
+          <div class="verdict-body">
+            <p class="verdict-lead">FDA Ghana warns this batch contains ethylene glycol, a poison. Stop using it now.</p>
+            <div class="timing mt-5" aria-hidden="true"><span class="seg-nemotron" style="flex:2.4"></span><span class="seg-tavily" style="flex:1.9"></span><span class="seg-nemotron" style="flex:2.8"></span><span class="seg-app" style="flex:.3"></span></div>
+            <div class="flex flex-wrap gap-x-4 gap-y-1 mt-3"><span class="legend" style="--dot:var(--color-tool-nemotron)">Nemotron read &amp; matched</span><span class="legend" style="--dot:var(--color-tool-tavily)">Tavily found the FDA alert</span></div>
+          </div>
+        </section>
+      </div>
+    </section>
+
+    <section id="pharm" class="border-t border-border">
+      <div class="max-w-content mx-auto px-12 py-16 grid grid-cols-[.8fr_1.2fr] gap-16 items-start">
+        <div>
+          <p class="t-eyebrow">For pharmacists</p>
+          <h2 class="t-h1 mt-2">Check before you dispense.</h2>
+          <p class="t-body-lg t-muted mt-3">Check several batches at the counter. Every answer links the FDA Ghana notice, so you can show the patient.</p>
+          <ul class="mt-6 grid gap-3">
+            <li class="flex gap-3 items-start">{{i:list-checks icon text-primary mt-0.5}}<span>Check up to 20 batches in one go</span></li>
+            <li class="flex gap-3 items-start">{{i:file-text icon text-primary mt-0.5}}<span>Print or share the FDA source</span></li>
+            <li class="flex gap-3 items-start">{{i:phone icon text-primary mt-0.5}}<span>Report to FDA: <strong class="nowrap">055 111 2224</strong></span></li>
+          </ul>
+        </div>
+        <div class="card overflow-hidden">
+          <div class="flex items-center justify-between px-5 py-4 border-b border-border"><p class="t-label">Batch check</p><span class="tag-example">EXAMPLE DATA</span></div>
+          <table class="tbl">
+            <thead><tr><th>Product</th><th>Batch</th><th>Result</th><th>Source</th></tr></thead>
+            <tbody>
+              <tr><td><strong>Para Clear Suspension 125</strong><br><span class="t-small t-muted">Paracetamol 125 mg/5 ml</span></td><td class="t-mono">L220008</td><td><span class="vchip vchip--scam">{{i:warning-octagon-fill icon-xs}} Do not use</span></td><td><a href="https://fdaghana.gov.gh/safety-alert-substandard-paracetamol-suspension-received-from-republic-of-liberia/" class="font-semibold">FDA alert, Jun 2023</a></td></tr>
+              <tr><td><strong>Metformin/vildagliptin 50/1000</strong><br><span class="t-small t-muted">Imported pack, foreign label</span></td><td class="t-mono t-muted">unreadable</td><td><span class="vchip vchip--suspicious">{{i:warning-fill icon-xs}} Check first</span></td><td><span class="t-small t-muted">Name matches an FDA notice</span></td></tr>
+              <tr><td><strong>Amoxicillin 500 mg capsules</strong><br><span class="t-small t-muted">Local manufacturer</span></td><td class="t-mono">AX23091</td><td><span class="vchip vchip--ok">{{i:check-circle-fill icon-xs}} No alerts found</span></td><td><span class="t-small t-muted">Searched 2 FDA lists</span></td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+  </main>
+</div>
+</body>
+</html>

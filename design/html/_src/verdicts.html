@@ -1,0 +1,33 @@
+<!doctype html>
+<html lang="en">
+<head>
+{{inc:head.html}}
+<title>Verdict system — MedVerify GH</title>
+</head>
+<body>
+<div class="app">
+  <header class="topbar"><p class="topbar-title">Verdict system</p><div class="topbar-actions"><span class="tag-example">EXAMPLES</span>{{inc:toggle.html}}</div></header>
+  <main class="gutter pt-6 pb-10 grid gap-5">
+    <section class="verdict verdict--scam" role="status">
+      <div class="verdict-head"><span class="verdict-ico">{{i:warning-octagon-fill icon-lg}}</span><p class="t-h2">Do not use</p></div>
+      <div class="verdict-body !py-4"><p class="t-label">Matches an FDA recall or alert.</p><p class="t-small t-muted mt-1">Para Clear 125, batch L220008: FDA safety alert, June 2023.</p></div>
+    </section>
+    <section class="verdict verdict--suspicious" role="status">
+      <div class="verdict-head"><span class="verdict-ico">{{i:warning-fill icon-lg}}</span><p class="t-h2">Check first</p></div>
+      <div class="verdict-body !py-4"><p class="t-label">Ask a pharmacist before you use it.</p><p class="t-small t-muted mt-1">Same name as an FDA alert, but we couldn’t read the batch. Or: not found on the register.</p></div>
+    </section>
+    <section class="verdict verdict--ok" role="status">
+      <div class="verdict-head"><span class="verdict-ico">{{i:check-circle-fill icon-lg}}</span><p class="t-h2">No alerts found</p></div>
+      <div class="verdict-body !py-4"><p class="t-label">No FDA Ghana recall for this batch.</p><p class="t-small t-muted mt-1">Not a promise it’s right for you. Follow the label and your pharmacist.</p></div>
+    </section>
+    <div class="card divided">
+      <p class="t-label px-5 pt-4 pb-3">How to read the shapes</p>
+      <p class="px-5 py-3 flex items-center gap-3"><span class="reason-ico">{{i:warning-octagon-fill icon-sm}}</span><span><strong>Octagon</strong> = Do not use. Stop now.</span></p>
+      <p class="px-5 py-3 flex items-center gap-3"><span class="reason-ico reason-ico--warn">{{i:warning-fill icon-sm}}</span><span><strong>Triangle</strong> = Check first. <span lang="tw">Hwɛ yie.</span></span></p>
+      <p class="px-5 py-3 flex items-center gap-3"><span class="reason-ico reason-ico--ok">{{i:check-circle-fill icon-sm}}</span><span><strong>Circle tick</strong> = No alerts found. We never say “safe”.</span></p>
+    </div>
+    <div class="flex flex-wrap gap-2"><span class="vchip vchip--scam">{{i:warning-octagon-fill icon-xs}} Do not use</span><span class="vchip vchip--suspicious">{{i:warning-fill icon-xs}} Check first</span><span class="vchip vchip--ok">{{i:check-circle-fill icon-xs}} No alerts found</span></div>
+  </main>
+</div>
+</body>
+</html>
