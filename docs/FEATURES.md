@@ -252,12 +252,13 @@ Acceptance:
 | Spend counter, soft and hard stop | done | `data/spend.json` plus memory. High estimate, not an invoice. |
 | Rate limit and live concurrency | done | 429 JSON when exceeded. Default 2 in flight. |
 | Keys server-side only | done | Not in `NEXT_PUBLIC_*`. `.env` gitignored. `.env.example` committed with empty keys. |
-| Dockerfile, `render.yaml`, `vercel.json` | done | Health check `/api/status`. Image defaults to demo and `LLM_ENABLED=false`. |
-| In-memory response cache | done | SHA-256, 30 minutes, 32 entries. Not a per-stage 24h Tavily cache, and examples are not pre-warmed into it. |
-| sharp re-encode and EXIF strip | todo | The browser shrinks the photo (`lib/client/media.ts`). The server does not re-encode with sharp. |
-| Numbered citation validator | todo | Evidence URLs are built from the corpus and from FDA hosts that passed the filter. The model is not given a numbered list that is then checked number-by-number. |
-| Keep-warm ping | todo | A free Render or Spaces instance can sleep. |
-| Automatic Super escalation on low confidence | todo | Verdict model stays Nano unless `NEBIUS_VERDICT_MODEL` is set to Super. Ultra cannot be selected. |
+| Dockerfile, `render.yaml`, `vercel.json` | done | Liveness is `/api/healthz`. The image runs as `node`, defaults to demo, and `LLM_ENABLED=false`. Render plan is `free`. |
+| In-memory response cache | done | Per-stage SHA-256. See the stage-cache row. |
+| sharp re-encode and EXIF strip | done | `lib/server/image.ts` checks magic bytes, caps the long edge at 1024, re-encodes JPEG, and strips EXIF before a live vision call. A non-image is rejected. The server still does not store the file. |
+| Numbered citation validator | done | The verdict prompt gets `[1]`, `[2]`, … and `applyCitedWording` drops any other number or URL. |
+| Stage cache and example pre-warm | done | Content-hash keys. Vision and normalise 30 minutes, Tavily and verdict wording 24 hours, 128 entries. The three example packs are seeded at startup. UI examples still force demo and do not read the cache. |
+| Keep-warm ping | done as opt-in | `scripts/keep-warm.mjs` and `.github/workflows/keep-warm.yml`. Not called from a request. Off until `KEEP_WARM=true` for a judging window. An inbound ping keeps a Render free instance awake and spends free hours. |
+| Automatic Super escalation on low confidence | done in the live path | Nano by default. Super only when confidence is under 0.8, the match is not an exact batch, and spend is under the soft line. Demo never escalates. Ultra cannot be selected. |
 
 ## Competitor position (copy, not a separate feature)
 

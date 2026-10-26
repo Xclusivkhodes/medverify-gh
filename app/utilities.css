@@ -42,7 +42,7 @@
   border: 1px solid var(--color-border-strong);
   border-radius: var(--radius-lg);
   background: var(--color-surface);
-  box-shadow: var(--shadow-lg);
+  box-shadow: none;
   padding: 16px;
 }
 .push-stub:focus { outline: 2px solid var(--color-primary); outline-offset: 3px; }
@@ -165,7 +165,7 @@ button { cursor: pointer; }
   .shell-wide .topbar-title { position: static; transform: none; max-width: none; }
   .hero-grid { display: grid; grid-template-columns: 1.05fr 0.95fr; gap: 80px; align-items: center; }
   .pharm-grid { display: grid; grid-template-columns: 0.8fr 1.2fr; gap: 64px; align-items: start; }
-  .hero-title { font-size: 3.5rem; line-height: 1.05; }
+  .hero-title { font-size: 2.75rem; line-height: 1.12; }
   .band { max-width: var(--size-content-max); margin-left: auto; margin-right: auto; padding-left: 48px; padding-right: 48px; }
   .band .gutter { padding-left: 0; padding-right: 0; }
   .px-desk { padding-left: 48px; padding-right: 48px; }

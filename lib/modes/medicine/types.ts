@@ -121,7 +121,7 @@ export type PresentationId = "do_not_use" | "check_first" | "no_alerts" | "unsur
 
 export interface MedicineResult {
   mode: "medicine";
-  runMode: "demo" | "live";
+  runMode: "demo" | "live" | "fallback";
   demoReason: string;
   /** search_failed means the UI must not show a verdict. */
   outcome: CheckOutcome;

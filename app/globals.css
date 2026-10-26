@@ -2,9 +2,9 @@
 @import "./components.css";
 @import "./utilities.css";
 
-/* Self-hosted families from next/font. Tokens keep the role names. */
+/* Self-hosted IBM Plex. Tokens name the families; these variables are the files. */
 html {
-  --font-display: var(--font-onest), "Onest", ui-sans-serif, system-ui, sans-serif;
-  --font-body: var(--font-source), "Source Sans 3", ui-sans-serif, system-ui, sans-serif;
-  --font-mono: var(--font-geist), "Geist Mono", ui-monospace, monospace;
+  --font-display: var(--font-plex-sans), "IBM Plex Sans", ui-sans-serif, system-ui, sans-serif;
+  --font-body: var(--font-plex-sans), "IBM Plex Sans", ui-sans-serif, system-ui, sans-serif;
+  --font-mono: var(--font-plex-mono), "IBM Plex Mono", ui-monospace, monospace;
 }

@@ -3,7 +3,7 @@
  * MedCheck GH lockups are already in /brand/logo/alt-name-medcheck.
  * Do not switch the name until that decision is made.
  *
- * Colours, type, and radii live only in app/tokens.css (v2).
+ * Colours, type, and radii live only in app/tokens.css (v3 pharmacy label).
  * The lockup files include the wordmark. Swap public/brand/logo with
  * public/brand/logo/alt-name-medcheck and change `name` together.
  */

@@ -1,19 +1,22 @@
-import { mkdirSync, readFileSync, writeFileSync } from "node:fs";
+import { mkdir, rename, unlink, writeFile } from "node:fs/promises";
+import { mkdirSync, readFileSync } from "node:fs";
 import { join } from "node:path";
 import type { TokenUsage } from "../budget";
 
+export type BudgetReason = "budget" | "busy";
+
 export class BudgetStop extends Error {
-  constructor(message: string) {
+  constructor(
+    message: string,
+    readonly reason: BudgetReason = "budget",
+  ) {
     super(message);
     this.name = "BudgetStop";
   }
 }
 
-/**
- * Rough guard, not a Nebius invoice. $0.002 per 1,000 tokens is a deliberate overestimate
- * so the hard stop arrives before a small credit balance is gone.
- */
-const USD_PER_1K = 0.002;
+/** Rough guard, not a Nebius invoice. Priced high so the stop arrives early. */
+export const USD_PER_1K = 0.002;
 const FILE = join(process.cwd(), "data", "spend.json");
 
 type SpendFile = { spentUsd: number; updatedAt: string };
@@ -25,6 +28,7 @@ function numberEnv(name: string, fallback: number): number {
 
 let spentUsd = loadSpent();
 let inflight = 0;
+let writeChain: Promise<void> = Promise.resolve();
 
 function loadSpent(): number {
   try {
@@ -33,6 +37,24 @@ function loadSpent(): number {
   } catch {
     return 0;
   }
+}
+
+function scheduleWrite(): void {
+  const snapshot = spentUsd;
+  writeChain = writeChain.then(() => persist(snapshot)).catch(() => undefined);
+}
+
+async function persist(amount: number): Promise<void> {
+  const dir = join(process.cwd(), "data");
+  await mkdir(dir, { recursive: true });
+  const tmp = join(dir, `spend.${process.pid}.${Date.now()}.tmp`);
+  const body: SpendFile = { spentUsd: amount, updatedAt: new Date().toISOString() };
+  await writeFile(tmp, JSON.stringify(body));
+  await rename(tmp, FILE);
+}
+
+export function flushSpend(): Promise<void> {
+  return writeChain;
 }
 
 export function budgetPublic() {
@@ -51,36 +73,57 @@ export function budgetPublic() {
   };
 }
 
-export function assertBudgetAllowsLive(): void {
-  const budget = budgetPublic();
-  if (budget.hardReached) {
-    throw new BudgetStop("The hard spend limit was reached. Live calls are stopped.");
+/**
+ * One slot per live check, not per model stage. Callers wait up to waitMs, then fail.
+ * The hard budget refuses immediately.
+ */
+export async function acquireRequestSlot(waitMs = 2000): Promise<() => void> {
+  if (budgetPublic().hardReached) {
+    throw new BudgetStop("The hard spend limit was reached. Live calls are stopped.", "budget");
   }
   const maxInflight = numberEnv("LIVE_CONCURRENCY", 2);
-  if (inflight >= maxInflight) {
-    throw new BudgetStop("Too many live checks are running. Try again in a moment.");
+  const deadline = Date.now() + waitMs;
+  while (inflight >= maxInflight) {
+    if (Date.now() >= deadline) {
+      throw new BudgetStop("Too many live checks are running. Try again in a moment.", "busy");
+    }
+    await new Promise((resolve) => setTimeout(resolve, 20));
   }
-}
-
-export function acquireInflight(): void {
-  assertBudgetAllowsLive();
   inflight += 1;
-}
-
-export function releaseInflight(): void {
-  inflight = Math.max(0, inflight - 1);
+  let released = false;
+  return () => {
+    if (released) return;
+    released = true;
+    inflight = Math.max(0, inflight - 1);
+  };
 }
 
 export function recordUsage(usage: TokenUsage | null): void {
   if (!usage) return;
   const tokens = Math.max(0, usage.prompt + usage.completion);
   spentUsd += (tokens / 1000) * USD_PER_1K;
-  try {
-    mkdirSync(join(process.cwd(), "data"), { recursive: true });
-    const body: SpendFile = { spentUsd, updatedAt: new Date().toISOString() };
-    writeFileSync(FILE, JSON.stringify(body));
-  } catch {
-    /* A read-only disk keeps the counter in memory for this process. */
-  }
+  scheduleWrite();
 }
 
+export function resetSpendForTests(usd = 0): void {
+  spentUsd = usd;
+  inflight = 0;
+  writeChain = Promise.resolve();
+}
+
+export function spendFilePath(): string {
+  return FILE;
+}
+
+export async function spendDirWritable(): Promise<boolean> {
+  try {
+    const dir = join(process.cwd(), "data");
+    mkdirSync(dir, { recursive: true });
+    const probe = join(dir, `.ready-${process.pid}.tmp`);
+    await writeFile(probe, "ok");
+    await unlink(probe);
+    return true;
+  } catch {
+    return false;
+  }
+}

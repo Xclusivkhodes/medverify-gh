@@ -1,6 +1,6 @@
 import { env, liveCallsBlockedReason } from "../env";
 import { ProviderError } from "./nebius";
-import { cacheGet, cacheKey, cacheSet } from "./cache";
+import { STAGE_TTL_MS, cacheGet, cacheSet, stageCacheKey } from "./cache";
 import { clip, stripTags } from "../text";
 
 export interface TavilyHit {
@@ -43,7 +43,8 @@ function assertLiveAllowed(): void {
 }
 
 async function searchOnce(query: string, country?: string): Promise<TavilyHit[]> {
-  const stored = cacheGet(cacheKey({ kind: "tavily", query, country: country ?? "" }));
+  const storedKey = stageCacheKey("tavily", { query, country: country ?? "" });
+  const stored = cacheGet(storedKey);
   if (stored) return JSON.parse(stored.text) as TavilyHit[];
 
   tavilyAttempts += 1;
@@ -89,11 +90,15 @@ async function searchOnce(query: string, country?: string): Promise<TavilyHit[]>
     };
     })
     .filter((hit): hit is TavilyHit => hit !== null && isFdaGhanaHost(hit.url));
-  cacheSet(cacheKey({ kind: "tavily", query, country: country ?? "" }), {
-    text: JSON.stringify(hits),
-    usage: null,
-    answerSource: "search",
-  });
+  cacheSet(
+    storedKey,
+    {
+      text: JSON.stringify(hits),
+      usage: null,
+      answerSource: "search",
+    },
+    STAGE_TTL_MS.tavily,
+  );
   return hits;
 }
 

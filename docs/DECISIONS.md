@@ -12,7 +12,7 @@ Pages and `POST /api/verify` (SSE) live in the same Next server. A static export
 
 ## Nano for text, VL only for the photo, Ultra never
 
-The credit budget is small. Vision is Nemotron 3.5 Super-VL because that is the pack-reading model. Normalise and verdict default to Nano. Super is available only by setting `NEBIUS_VERDICT_MODEL`. It is not auto-selected on low confidence yet (`docs/ROADMAP.md`). Ultra is coerced back to the fallback in `blockUltra` so a pasted Ultra id cannot hit the live path. Token caps exist because Super spends `max_tokens` on `reasoning_content` and can return null `content`. Empty content is recovered from reasoning or the check fails closed.
+The credit budget is small. Vision is Nemotron 3.5 Super-VL because that is the pack-reading model. Normalise and verdict default to Nano. On a live check, Super writes the verdict only when confidence is under 0.8, the match is not an exact batch, and spend is under the soft line. Demo mode does not escalate. Ultra is coerced back to the fallback in `blockUltra` so a pasted Ultra id cannot hit the live path. Token caps exist because Super spends `max_tokens` on `reasoning_content` and can return null `content`. Empty content is recovered from reasoning or the check fails closed. Super’s own output cap is 1024. Nano stays at the configured cap, default 512.
 
 The UI must show the model id the server would actually call. Demo traces say Nano was not called. They must not pretend the mock used Super.
 
@@ -20,7 +20,7 @@ The UI must show the model id the server would actually call. Demo traces say Na
 
 `lib/server/spend.ts` prices tokens at a high flat rate so the hard stop (default 90% of $1) arrives before a real bill would. Soft stop is 70%. The file `data/spend.json` is gitignored. Ephemeral hosts may reset it. The in-memory counter still holds for the process. Rate limit is 30 checks a minute per IP and 120 a minute globally, and two live calls may run at once. Those numbers are in `.env.example`.
 
-The in-memory LLM cache is 32 entries and 30 minutes. We did not build the review’s per-stage hash cache, 24-hour Tavily TTL, or example pre-warm. Judges’ example buttons are free because they never call the model, which matters more than warming a cache we are not allowed to fill.
+The in-memory cache is keyed by app, pipeline version, stage, and a hash of the normalised input. Vision and normalise last 30 minutes. Tavily results and verdict wording last 24 hours. The cap is 128 entries. Startup seeds normalise and verdict entries for the three example packs, so a live repeat of those labels can skip Token Factory. Example buttons still send `forceDemo` and do not read that cache. Tavily is not seeded with empty hits.
 
 ## Tavily is FDA Ghana only, and a failed search is not a verdict
 
@@ -76,7 +76,7 @@ A shared heatmap needs a server and moderation. Notes are stored locally, stripp
 
 ## Image handling
 
-The server does not store the photo. Offline save uses IndexedDB and must not claim “photo not stored”. Server-side sharp re-encode and EXIF stripping were in the backend review and are not built. The client shrinks the image before upload.
+The server does not store the photo. Offline save uses IndexedDB and must not claim “photo not stored”. Before a photo is used, the server checks the type and magic bytes, caps the long edge at 1024, re-encodes JPEG with sharp, and strips EXIF. The client still shrinks the image before upload.
 
 ## Tests and the Next dev origin
 
@@ -84,4 +84,4 @@ The server does not store the photo. Offline save uses IndexedDB and must not cl
 
 ## Deploy defaults
 
-`Dockerfile` and `render.yaml` set `DEMO_MODE=true` and `LLM_ENABLED=false`. `vercel.json` is the same Next app, not a static export. Port 43123 avoids the usual 3000 / 5173 / 8080 clashes in this environment. Hugging Face is the same Docker image. No keep-warm ping is included, because a ping that violates a free-tier rule is worse than a cold start we document.
+`Dockerfile` and `render.yaml` set `DEMO_MODE=true` and `LLM_ENABLED=false`. `vercel.json` is the same Next app, not a static export. Port 43123 avoids the usual 3000 / 5173 / 8080 clashes in this environment. Hugging Face is the same Docker image. A keep-warm ping exists only as `scripts/keep-warm.mjs` and a GitHub workflow that stays off until `KEEP_WARM=true`. Render’s free tier, as documented on 26 Oct 2026, spins down after 15 minutes without an inbound request. The ping is inbound, it is not hidden in the request path, and leaving it on spends the monthly free instance hours.

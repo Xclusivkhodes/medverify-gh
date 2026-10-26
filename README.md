@@ -60,7 +60,9 @@ All live model calls would go through Nebius Token Factory, OpenAI-compatible, b
 | Wording | `nvidia/NVIDIA-Nemotron-3-Nano-30B-A3B` |
 | FDA pages | Tavily, `include_domains: fdaghana.gov.gh` only |
 
-Ultra is rejected if you paste its id into the env. Super is not the default. Output is capped (`NEBIUS_MAX_TOKENS`, default 512) because Super can spend the whole cap on `reasoning_content` and return empty `content`. Empty content is recovered from reasoning or the check fails closed.
+Ultra is rejected if you paste its id into the env. Nano writes the verdict. On a live check, Super is used only when confidence is under 0.8, the batch is not an exact alert match, and spend is under the soft line. Demo mode does not escalate. Output is capped (`NEBIUS_MAX_TOKENS`, default 512; Super uses 1024) because Super can spend the whole cap on `reasoning_content` and return empty `content`. Empty content is recovered from reasoning or the check fails closed.
+
+The verdict model is given a numbered list of sources and may cite only those numbers. Any other number or URL is dropped. Photos are re-encoded on the server (long edge 1024, JPEG, EXIF removed) and are not stored. Repeat live checks of the same label can be served from a short in-memory cache. The three example packs are seeded into that cache. The example buttons still force demo mode and do not call a model.
 
 `DEMO_MODE=true` is the default. `LLM_ENABLED=false` forces demo even if `DEMO_MODE` is turned off. Leave both like that until you accept the API budget.
 
@@ -68,17 +70,17 @@ A live process also keeps a rough spend counter (`BUDGET_USD` default $1, soft 7
 
 ## Deploy
 
-The app is one Next.js server: pages and `/api/verify` (server-sent events) plus `/api/status`.
+The app is one Next.js server: pages and `/api/verify` (server-sent events). `/api/healthz` is liveness. `/api/readyz` and `/api/status` return only `{ok, mode, llm}`. Budget and model ids are on `/api/admin/status` behind `ADMIN_SECRET`. `/api/v1/verify` is the same check.
 
 **Vercel (UI and API together).** Import the repo. Leave `DEMO_MODE=true` and `LLM_ENABLED=false`. Do not set the API keys. `vercel.json` is included.
 
-**Render (Docker).** `render.yaml` builds `Dockerfile` and health-checks `/api/status`. The image defaults to demo mode. Secrets are not baked in. On Render’s ephemeral disk the spend file under `data/` may reset when the instance restarts; the in-memory counter still applies for the life of the process.
+**Render (Docker).** `render.yaml` is the free plan, builds `Dockerfile`, and health-checks `/api/healthz`. The image runs as `node`, defaults to demo mode, and sets `TRUST_PROXY=1`. Secrets are not baked in. Free Render has no disk, so `LLM_ENABLED` stays false there. The spend file is written by temp-file rename and still resets when the instance restarts; the in-memory counter applies for the life of the process.
 
 **Split hosts.** Deploy the same image on Render for the API. On Vercel set `NEXT_PUBLIC_API_BASE` to the Render origin (no trailing slash) and set `CORS_ORIGINS` on Render to the Vercel origin. Same-origin hosting does not need either variable.
 
 **Hugging Face Spaces.** Use the Docker SDK with this `Dockerfile`. Set `DEMO_MODE=true`. The container listens on port 43123.
 
-Do not point a host at live keys until you mean to spend credits. There is no keep-warm ping in this repo; a free instance may sleep until the next request.
+Do not point a host at live keys until you mean to spend credits. A free Render instance spins down after 15 minutes without an inbound request. `scripts/keep-warm.mjs` pings `/api/healthz` when `KEEP_WARM_URL` is set. The GitHub workflow `.github/workflows/keep-warm.yml` does nothing until the repository variable `KEEP_WARM` is `true`. Leave it off outside a judging window: an awake free instance spends the monthly free hours. The app does not ping itself.
 
 ## Privacy
 

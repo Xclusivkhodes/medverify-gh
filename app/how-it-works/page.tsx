@@ -43,6 +43,13 @@ export default function HowItWorksPage() {
         <p>
           A family cabinet keeps a parent’s or a child’s packs on the same phone. Pharmacist mode logs stock with the time you checked it. That time is not an FDA stamp.
         </p>
+        <h2 className="t-h2">On a live check</h2>
+        <p>
+          Photos are re-encoded on the server and location data is stripped before a model sees them. The server does not keep the file. Nano writes the verdict. Super is used only when confidence is low, the batch is not an exact alert match, and spend is under the soft limit. Ultra is never called. The model may cite only the numbered FDA pages it was given. Any other number or link is dropped.
+        </p>
+        <p>
+          Repeat checks of the same label can be served from a short memory on the server. The three example buttons stay on the bundled snapshot and do not call a model. Demo mode is the default.
+        </p>
         <h2 className="t-h2">What else the check uses</h2>
         <p>
           Each field comes back with a confidence. Unreadable stays blank. A GS1 barcode is decoded on the phone and compared with the printed batch and expiry. A mismatch is a red flag. A small register snapshot shows weighted points for a few demo rows. It is not the full FDA register.

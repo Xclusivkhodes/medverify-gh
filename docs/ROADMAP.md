@@ -16,25 +16,23 @@ While you are there, save desktop screenshots at 1440 in light and dark for home
 
 When that happens, in this order:
 
-1. Set the keys only in the host env. Confirm `GET /api/status` still shows `demoLocked` until you flip both switches.
+1. Set the keys only in the host env. `GET /api/readyz` stays `{mode:"demo"}` until you flip both switches. Model ids and the budget are on `/api/admin/status`.
 2. Run one pack, read `usage` from the provider, and replace the flat `USD_PER_1K = 0.002` estimate in `lib/server/spend.ts` with the published Token Factory prices. The current figure is deliberately high so the stop arrives early. It is not an invoice.
 3. Watch `data/spend.json`. On Render’s disk it can vanish on restart. If the counter must survive, use a hosted store. Do not add SQLite on the container disk and call it durable.
 4. Only then set `LLM_ENABLED=true` and `DEMO_MODE=auto` or `false`.
 
 ## 3. Super only as a low-confidence escalation
 
-The backend review asked for Nano by default and Super only when confidence is low and the budget is above the soft line. Today the verdict model is whatever `NEBIUS_VERDICT_MODEL` says, and the default is Nano. There is no automatic escalation.
-
-Build that only after step 2, with a test that Super is not called when the rules are already sure (exact batch match) and that Ultra is still impossible.
+Done in code, and covered by `npm run eval`. Demo mode never calls Super. On a live check, `chooseVerdictModel` keeps Nano when the rules are already sure (exact batch match, or confidence at least 0.8) or when spend is at the soft line. Otherwise the verdict step uses Super, with a 1024-token cap. Ultra still cannot be selected. Do not turn live mode on until step 2.
 
 ## 4. Backend-review leftovers that are still local
 
-These do not need a vendor account:
+Done, without a vendor account:
 
-- Re-encode uploads with sharp (or the same idea): cap size, check the type, strip EXIF. The browser already shrinks images. The server does not.
-- Cache stages by content hash, with a longer TTL for Tavily and a pre-warm of the three example packs. The cache now is one in-memory map, 32 entries, 30 minutes.
-- Give the verdict model numbered sources and drop any citation number that was not in that list.
-- A keep-warm ping during a judging window, only if the host’s terms allow it. Do not hide it inside the request path.
+- Uploads are re-encoded with sharp: type and magic bytes, long edge 1024, JPEG, EXIF stripped (`lib/server/image.ts`). The browser still shrinks images first. The server does not store the file.
+- Stages cache by content hash. Tavily and verdict wording last 24 hours. Vision and normalise last 30 minutes. The three example packs are pre-warmed. Tavily is not pre-filled with empty hits, because that would look like a real search.
+- The verdict prompt receives numbered sources. Numbers and URLs outside that list are dropped.
+- Keep-warm is `scripts/keep-warm.mjs` plus a workflow that runs only when the `KEEP_WARM` repository variable is true. It is not inside the request path. Render’s current free-tier docs (checked 26 Oct 2026) say a free web service spins down after 15 minutes without an inbound request, and that keeping it running spends the 750 free instance hours. Turn the ping on for a judging window, then turn it off.
 
 Do not start a second API process. Static export would drop `app/api`. The optional split is `NEXT_PUBLIC_API_BASE` plus `CORS_ORIGINS`, documented in the README.
 
@@ -62,5 +60,5 @@ Do not fake these.
 ## 7. Polish that is still open
 
 - Walk 360, 768, and 1440 in light and dark after any layout change. Known risks: a long result page, the top bar on small widths, and the pharmacist table scrolling sideways.
-- `search_failed` and the slow banner are implemented and hard to see while demo mode is on. A unit or Playwright test that stubs the failure is more honest than weakening the demo guard.
+- `search_failed` and the slow banner are covered without weakening the demo guard. The eval stubs a failed search on the live branch. Playwright stubs the verify response for the failed-search screen and delays it for the slow banner.
 - The hydration warning in Playwright (`caret-color: transparent` on inputs) comes from the browser, not from our styles. If Lighthouse best-practices ever drops because of a console error, confirm it is still that injection before changing inputs.

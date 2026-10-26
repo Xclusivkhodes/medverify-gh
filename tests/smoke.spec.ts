@@ -17,7 +17,7 @@ async function visibleEyeDrops(page: Page) {
 test("home, eye drops, cabinet warning, no live calls", async ({ page }, info) => {
   const blocked = watchNetwork(page);
   await page.goto("/");
-  await expect(page.getByRole("heading", { name: /Check the batch/ }).first()).toBeVisible();
+  await expect(page.getByRole("heading", { name: /Check a medicine before you take it/ }).first()).toBeVisible();
   if (info.project.name === "mobile") {
     await mkdir("docs/screenshots", { recursive: true });
     await page.screenshot({ path: "docs/screenshots/home-mobile-light.png", fullPage: true });
@@ -27,6 +27,7 @@ test("home, eye drops, cabinet warning, no live calls", async ({ page }, info) =
   await expect(page.getByText("Registered, no alerts")).toBeVisible();
   await expect(page.getByText("The barcode matches the printed batch and expiry.")).toBeVisible();
   await expect(page.getByText("A photo cannot prove a medicine is genuine.")).toBeVisible();
+  await expect(page.getByText(/does not show the pack is free of quality problems/)).toBeVisible();
   if (info.project.name === "mobile") {
     await page.screenshot({ path: "docs/screenshots/result-no-alerts-mobile.png", fullPage: true });
   }
@@ -43,6 +44,78 @@ test("home, eye drops, cabinet warning, no live calls", async ({ page }, info) =
     await page.screenshot({ path: "docs/screenshots/cabinet-alert-mobile-toggled.png", fullPage: true });
   }
   expect(blocked).toEqual([]);
+});
+
+const searchFailed = {
+  mode: "medicine",
+  runMode: "demo",
+  demoReason: "Stubbed search failure.",
+  outcome: "search_failed",
+  presentation: "unsure",
+  confidence: 0,
+  match: "none",
+  verdict: "no_alerts",
+  verdictLabel: "No alerts found",
+  headline: "The FDA search didn’t answer",
+  summary: "We won’t guess a verdict without FDA Ghana pages. Try again in a moment.",
+  pharmacistNote: "Consult a pharmacist.",
+  flags: [],
+  fields: {
+    productName: "Zedexol Syrup",
+    manufacturer: "",
+    batch: "ZX-9",
+    expiry: "12/2028",
+    registrationNumber: "",
+    otherText: "",
+  },
+  reads: [],
+  oddities: [],
+  gs1: null,
+  register: { found: false, score: 0, max: 100, lines: [], note: "Not the full FDA register." },
+  visual: { referenceId: null, referenceLabel: "", image: null, compared: false, hints: [], caveat: "A photo cannot prove a medicine is genuine." },
+  band: "Can't tell, ask a pharmacist",
+  evidence: [],
+  actions: [],
+  report: [],
+  trace: [],
+  disclaimer: "Not medical advice.",
+  limitations: [],
+  checkedAt: "2026-10-26T00:00:00.000Z",
+  asOf: "26 October 2026",
+};
+
+test("a failed FDA search shows no verdict and offers a retry", async ({ page }) => {
+  await page.route("**/api/verify", async (route) => {
+    if (route.request().method() !== "POST") return route.continue();
+    await route.fulfill({
+      status: 200,
+      headers: { "Content-Type": "text/event-stream; charset=utf-8" },
+      body: `event: result\ndata: ${JSON.stringify(searchFailed)}\n\n`,
+    });
+  });
+  await page.goto("/");
+  await page.locator("button:visible").filter({ hasText: "Eye drops" }).first().click();
+  await page.getByRole("button", { name: "Check medicine" }).click();
+  await expect(page.getByText("FDA search didn’t answer", { exact: true })).toBeVisible();
+  await expect(page.getByRole("button", { name: "Try again" })).toBeVisible();
+  await expect(page.getByRole("heading", { name: "Do not use" })).toHaveCount(0);
+  await expect(page.getByRole("heading", { name: "No alerts found" })).toHaveCount(0);
+});
+
+test("a slow check says not to take the medicine yet", async ({ page }) => {
+  await page.route("**/api/verify", async (route) => {
+    if (route.request().method() !== "POST") return route.continue();
+    await new Promise((resolve) => setTimeout(resolve, 9000));
+    await route.fulfill({
+      status: 200,
+      headers: { "Content-Type": "text/event-stream; charset=utf-8" },
+      body: "event: error\ndata: {\"error\":\"The check failed. Try again.\"}\n\n",
+    });
+  });
+  await page.goto("/");
+  await page.locator("button:visible").filter({ hasText: "Eye drops" }).first().click();
+  await page.getByRole("button", { name: "Check medicine" }).click();
+  await expect(page.getByText("Don’t take the medicine yet.")).toBeVisible({ timeout: 15_000 });
 });
 
 test("Para Clear is do not use, with the fixed contacts", async ({ page }) => {
