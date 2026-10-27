@@ -9,8 +9,9 @@
  * - nvidia/nemotron-3-super-120b-a12b     opt-in; spends the token cap on reasoning
  * - nvidia/Nemotron-3-Ultra-550b-a55b     opt-in; same reasoning cost, larger
  *
- * Text steps default to Nano. VL is only for the pack photo. Super is an
- * opt-in escalation. Ultra is never used on the live path. Super returns
+ * Text steps default to Nano. VL is only for the pack photo. Super writes
+ * the verdict only when a live check is unsure and spend is under the soft
+ * line. Ultra is never used on the live path. Super returns
  * reasoning in message.reasoning_content and can leave content null when
  * max_tokens is used up by that reasoning.
  */

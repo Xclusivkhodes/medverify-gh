@@ -3,34 +3,20 @@ import localFont from "next/font/local";
 import { PRODUCT, footerDisclaimer } from "@/lib/brand";
 import "./globals.css";
 
-const onest = localFont({
-  src: [
-    { path: "../node_modules/@fontsource/onest/files/onest-latin-500-normal.woff2", weight: "500", style: "normal" },
-    { path: "../node_modules/@fontsource/onest/files/onest-latin-600-normal.woff2", weight: "600", style: "normal" },
-    { path: "../node_modules/@fontsource/onest/files/onest-latin-700-normal.woff2", weight: "700", style: "normal" },
-  ],
-  variable: "--font-onest",
+const plexSans = localFont({
+  src: "../node_modules/@fontsource-variable/ibm-plex-sans/files/ibm-plex-sans-latin-wght-normal.woff2",
+  variable: "--font-plex-sans",
   display: "swap",
+  weight: "400 600",
   adjustFontFallback: "Arial",
 });
 
-const sourceSans = localFont({
+const plexMono = localFont({
   src: [
-    { path: "../node_modules/@fontsource/source-sans-3/files/source-sans-3-latin-400-normal.woff2", weight: "400", style: "normal" },
-    { path: "../node_modules/@fontsource/source-sans-3/files/source-sans-3-latin-600-normal.woff2", weight: "600", style: "normal" },
-    { path: "../node_modules/@fontsource/source-sans-3/files/source-sans-3-latin-700-normal.woff2", weight: "700", style: "normal" },
+    { path: "../node_modules/@fontsource/ibm-plex-mono/files/ibm-plex-mono-latin-400-normal.woff2", weight: "400", style: "normal" },
+    { path: "../node_modules/@fontsource/ibm-plex-mono/files/ibm-plex-mono-latin-500-normal.woff2", weight: "500", style: "normal" },
   ],
-  variable: "--font-source",
-  display: "swap",
-  adjustFontFallback: "Arial",
-});
-
-const geist = localFont({
-  src: [
-    { path: "../node_modules/@fontsource/geist-mono/files/geist-mono-latin-400-normal.woff2", weight: "400", style: "normal" },
-    { path: "../node_modules/@fontsource/geist-mono/files/geist-mono-latin-500-normal.woff2", weight: "500", style: "normal" },
-  ],
-  variable: "--font-geist",
+  variable: "--font-plex-mono",
   display: "swap",
   adjustFontFallback: false,
 });
@@ -68,7 +54,7 @@ export const viewport: Viewport = {
   viewportFit: "cover",
   themeColor: [
     { media: "(prefers-color-scheme: light)", color: "#FFFFFF" },
-    { media: "(prefers-color-scheme: dark)", color: "#18181B" },
+    { media: "(prefers-color-scheme: dark)", color: "#111113" },
   ],
 };
 
@@ -76,7 +62,7 @@ const themeScript = `(function(){try{var q=new URLSearchParams(location.search).
 
 export default function RootLayout({ children }: LayoutProps<"/">) {
   return (
-    <html lang="en" className={`${onest.variable} ${sourceSans.variable} ${geist.variable}`} suppressHydrationWarning>
+    <html lang="en" className={`${plexSans.variable} ${plexMono.variable}`} suppressHydrationWarning>
       <head>
         <script dangerouslySetInnerHTML={{ __html: themeScript }} />
       </head>

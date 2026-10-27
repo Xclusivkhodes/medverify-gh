@@ -1,6 +1,7 @@
 "use client";
 
 import { CheckDetails } from "@/components/check-details";
+import { CitedText } from "@/components/cited-text";
 import { Shell } from "@/components/shell";
 import { SiteFooter } from "@/components/site-footer";
 import { CONTACTS, PRODUCT, footerDisclaimer, type Presentation } from "@/lib/brand";
@@ -11,7 +12,7 @@ import { clearPendingPhoto, loadPendingPhoto, photoQuality, savePendingPhoto, sh
 import { offlineMedicineResult } from "@/lib/client/offline-check";
 import { setLowData, useLowData } from "@/lib/client/prefs";
 import { streamCheck } from "@/lib/client/stream";
-import { modelShortName } from "@/lib/models";
+import { MODEL_DEFAULTS, modelShortName } from "@/lib/models";
 import { TRY_EXAMPLES, getScenario } from "@/lib/modes/medicine/scenarios";
 import type { LabelFields, MedicineResult } from "@/lib/modes/medicine/types";
 import type { TraceStep } from "@/lib/modes/types";
@@ -80,10 +81,9 @@ const STAGE_ORDER = [
 ] as const;
 
 type Status = {
-  demoLocked: boolean;
-  canUseLive: boolean;
-  reason: string;
-  models: { vision: string; normalize: string; verdict: string };
+  ok?: boolean;
+  mode?: "demo" | "live";
+  llm?: "ok" | "paused" | "breaker_open";
 };
 
 type RunInput = {
@@ -326,7 +326,7 @@ export function CheckApp() {
         {
           mode: "medicine",
           scenarioId: input.scenarioId ?? undefined,
-          forceDemo: Boolean(input.scenarioId) || (status?.demoLocked ?? true),
+          forceDemo: Boolean(input.scenarioId) || status?.mode !== "live",
           productName: input.fields.productName,
           manufacturer: input.fields.manufacturer,
           batch: input.fields.batch,
@@ -409,7 +409,7 @@ export function CheckApp() {
     setDeskBatch("");
     try {
       const payload = await streamCheck(
-        { mode: "medicine", forceDemo: status?.demoLocked ?? true, productName: name, batch },
+        { mode: "medicine", forceDemo: status?.mode !== "live", productName: name, batch },
         () => undefined,
       );
       logStock({
@@ -553,7 +553,6 @@ export function CheckApp() {
           slow={slow}
           fields={fields}
           example={Boolean(scenario)}
-          models={status?.models}
         />
       ) : null}
 
@@ -573,7 +572,7 @@ export function CheckApp() {
         />
       ) : null}
 
-      {view === "evidence" && result ? <Evidence result={result} models={status?.models} /> : null}
+      {view === "evidence" && result ? <Evidence result={result} /> : null}
 
       <input
         ref={fileRef}
@@ -620,57 +619,56 @@ function Home(props: {
     <main>
       <div className="phone-only">
         <section className="gutter pt-8">
-          <p className="t-eyebrow">FDA Ghana alerts and recalls · Free</p>
-          <h1 className="t-display mt-3">
-            Check the batch,
-            <br />
-            not the box.
-          </h1>
-          <p className="t-body-lg t-muted mt-4">
-            Photograph your medicine pack. In about 10 seconds we compare its batch number with FDA Ghana warnings.
+          <p className="t-eyebrow">FDA Ghana · WHO alerts</p>
+          <h1 className="t-display mt-3">Check a medicine before you take it.</h1>
+          <p className="t-lead mt-4">
+            Type the name and batch number from the pack. We compare them with public safety alerts.
           </p>
         </section>
-        <section className="gutter mt-8" aria-labelledby="check-h">
+        <section className="gutter mt-6" aria-labelledby="check-h">
           <h2 id="check-h" className="sr-only">Check a medicine</h2>
-          <button type="button" className="btn btn-primary btn-xl btn-block" onClick={props.onCamera}>
-            <Camera className="icon" aria-hidden="true" /> Photograph the pack
-          </button>
-          <div className="grid grid-cols-2 gap-3 mt-3">
-            <button type="button" className="btn btn-outline" onClick={props.onUpload}>
-              <UploadSimple className="icon-sm" aria-hidden="true" /> Upload
+          <form className="card stack" onSubmit={props.onHero}>
+            <div className="field">
+              <label className="field-label" htmlFor="home-name">Medicine name</label>
+              <input id="home-name" className="input" placeholder="Para Clear 125 Suspension" value={props.heroName} onChange={(event) => props.setHeroName(event.target.value)} />
+            </div>
+            <div className="field">
+              <label className="field-label" htmlFor="home-batch">
+                Batch number <span className="opt">On the box, near “LOT” or “B.No”</span>
+              </label>
+              <input id="home-batch" className="input input--code" placeholder="L220008" autoCapitalize="characters" autoCorrect="off" spellCheck={false} value={props.heroBatch} onChange={(event) => props.setHeroBatch(event.target.value.toUpperCase())} />
+            </div>
+            <button className="btn btn-primary btn-lg btn-block" type="submit">Check medicine</button>
+            <button type="button" className="btn btn-outline btn-lg btn-block" onClick={props.onCamera}>
+              <Camera className="icon-sm" aria-hidden="true" /> Photograph the pack
             </button>
-            <button type="button" className="btn btn-outline" onClick={props.onType}>
-              <Keyboard className="icon-sm" aria-hidden="true" /> Type it
-            </button>
-          </div>
+          </form>
           <p className="mt-4">
             <label className="flex items-center gap-2 t-small">
               <input type="checkbox" checked={props.lowData} onChange={(event) => props.onLowData(event.target.checked)} />
               Low-data mode. Type the label. Don’t upload a photo.
             </label>
           </p>
-          <p className="t-small t-muted mt-4 flex items-start gap-2">
-            <Barcode className="icon-sm text-primary" aria-hidden="true" />
-            <span>
-              Show the side with the <strong className="text-text">batch number</strong> and <strong className="text-text">expiry date</strong>.
-            </span>
-          </p>
         </section>
         <Examples onExample={props.onExample} />
+        <section className="gutter mt-8" aria-labelledby="steps-h">
+          <h2 id="steps-h" className="t-h3">Three steps. No sign-up.</h2>
+          <ol className="todo mt-3">
+            <li><b>Read the pack</b><span>Name, batch and expiry — or a photo.</span></li>
+            <li><b>We check public alerts</b><span>FDA Ghana and WHO notices. Not a guess.</span></li>
+            <li><b>You get a cited answer</b><span>Do not use, check first, or no alerts found.</span></li>
+          </ol>
+        </section>
         <Sos />
       </div>
 
       <div className="from-desk">
         <section className="max-w-content mx-auto px-desk hero-grid" style={{ paddingTop: 64, paddingBottom: 80 }}>
           <div>
-            <p className="t-eyebrow">FDA Ghana alerts, recalls and register · Free</p>
-            <h1 className="t-display hero-title mt-4">
-              Check the batch,
-              <br />
-              not the box.
-            </h1>
-            <p className="t-body-lg t-muted mt-6 max-w-38">
-              Photograph the pack or type the batch. In about 10 seconds you’ll see any FDA Ghana alert, why it matters, and what to do.
+            <p className="t-eyebrow">FDA Ghana · WHO alerts</p>
+            <h1 className="t-display hero-title mt-4">Check a medicine before you take it.</h1>
+            <p className="t-lead mt-6 max-w-38">
+              Type the name and batch number from the pack. We compare them with public safety alerts.
             </p>
             <div className="card p-6 mt-10 max-w-600">
               <div
@@ -711,16 +709,18 @@ function Home(props: {
           </div>
           <div className="grid gap-4" aria-label="Example of an answer">
             <article className="verdict verdict--scam">
-              <div className="verdict-head">
-                <span className="verdict-ico"><WarningOctagon className="icon-xl" weight="fill" aria-hidden="true" /></span>
-                <div>
-                  <p className="verdict-kicker">Example · FDA Ghana alert match</p>
-                  <p className="t-verdict">Do not use</p>
-                </div>
+              <div className="verdict-strip">
+                <WarningOctagon className="icon-sm" weight="bold" aria-hidden="true" />
+                Do not use
+                <span className="when">Checked just now</span>
               </div>
               <div className="verdict-body">
-                <p className="verdict-lead">Para Clear Suspension 125, batch L220008, is named in an FDA Ghana safety alert.</p>
-                <p className="t-small t-muted mt-3">This preview uses a real public notice. It is not a promise about any other pack.</p>
+                <p className="verdict-lead">This batch has an FDA Ghana recall.</p>
+                <dl className="kv">
+                  <dt>Medicine</dt><dd>Para Clear 125 Suspension</dd>
+                  <dt>Batch</dt><dd className="t-mono">L220008</dd>
+                  <dt>Alert</dt><dd>Recall — failed quality test</dd>
+                </dl>
               </div>
             </article>
           </div>
@@ -863,7 +863,7 @@ function Who() {
         </div>
         <div className="p-5 flex gap-4 items-start">
           <span className="model-ico model-ico--nemotron"><Scales className="icon-sm" aria-hidden="true" /></span>
-          <div><p className="t-label">Nemotron matches the batch</p><p className="t-small t-muted">Writes the wording. The rules keep the category.</p></div>
+          <div><p className="t-label">Nemotron matches the batch</p><p className="t-small t-muted">Nano writes the wording. Super only steps in on a live check when the rules are unsure and the spend limit still has room. The rules keep the category.</p></div>
         </div>
       </div>
     </section>
@@ -1121,7 +1121,6 @@ function Checking({
   slow,
   fields,
   example,
-  models,
 }: {
   stages: TraceStep[];
   activeId?: string;
@@ -1129,7 +1128,6 @@ function Checking({
   slow: boolean;
   fields: LabelFields;
   example: boolean;
-  models?: Status["models"];
 }) {
   const byId = new Map(stages.map((step) => [step.id, step]));
   const doneCount = stages.length;
@@ -1158,7 +1156,7 @@ function Checking({
         {STAGE_ORDER.map((item) => {
           const step = byId.get(item.id);
           const state = step ? (step.status === "error" ? "fail" : "done") : item.id === activeId ? "active" : "pending";
-          const modelId = step?.model ?? (item.id === "vision" ? models?.vision : item.id === "evidence" ? "tavily/search" : item.id === "normalize" ? models?.normalize : models?.verdict);
+          const modelId = step?.model ?? (item.id === "vision" ? MODEL_DEFAULTS.vision : item.id === "evidence" ? "tavily/search" : item.id === "normalize" ? MODEL_DEFAULTS.normalize : MODEL_DEFAULTS.verdict);
           const StepIcon = state === "done" ? Check : state === "fail" ? X : item.Icon;
           return (
             <li key={item.id} className={state === "done" ? "is-done" : state === "active" ? "is-active" : state === "fail" ? "is-fail" : "is-pending"} aria-current={state === "active" ? "step" : undefined}>
@@ -1263,20 +1261,23 @@ function ResultView({
   return (
     <main className="gutter pt-6 pb-12">
       <section className={`verdict ${verdictClass}`} role="status" aria-labelledby="v-word">
-        <div className="verdict-head">
-          <span className="verdict-ico"><HeadIcon className="icon-xl" weight="fill" aria-hidden="true" /></span>
-          <div>
-            {presentation !== "unsure" ? <p className="verdict-kicker">{kicker}</p> : null}
-            <h1 id="v-word" className={presentation === "unsure" ? "t-h2" : "t-verdict"}>{word}</h1>
-          </div>
+        <div className="verdict-strip">
+          <HeadIcon className="icon-sm" weight="bold" aria-hidden="true" />
+          <h1 id="v-word">{word}</h1>
+          <span className="when">{kicker}</span>
         </div>
         <div className="verdict-body">
           {presentation === "unsure" ? (
-            <p>Treat it as <strong>Check first</strong>. Show the pack to a pharmacist before you use it.</p>
+            <p className="verdict-lead">Treat it as check first. Show the pack to a pharmacist before you use it.</p>
           ) : (
             <p className="verdict-lead">{result.headline}</p>
           )}
           {result.band ? <p className="t-label mt-3">{result.band}</p> : null}
+          {result.summary ? (
+            <p className="mt-3">
+              <CitedText text={result.summary} evidence={result.evidence} />
+            </p>
+          ) : null}
           {presentation !== "unsure" ? (
             <div className="confidence mt-5">
               <div className="confidence-row">
@@ -1443,7 +1444,7 @@ function Why({ result, onEvidence }: { result: MedicineResult; onEvidence: () =>
   );
 }
 
-function Evidence({ result, models }: { result: MedicineResult; models?: Status["models"] }) {
+function Evidence({ result }: { result: MedicineResult }) {
   const total = result.trace.reduce((sum, step) => sum + step.durationMs, 0);
   const word = result.outcome === "search_failed" ? "No verdict" : result.presentation === "do_not_use" ? "Do not use" : result.presentation === "check_first" ? "Check first" : result.presentation === "no_alerts" ? "No alerts found" : "We’re not sure";
   const pct = Math.round(result.confidence * 100);
@@ -1502,9 +1503,9 @@ function Evidence({ result, models }: { result: MedicineResult; models?: Status[
       </ol>
       <div className="card p-5 mt-4">
         <p className="t-label">Configured model ids</p>
-        <p className="model-id mt-2">Vision {models?.vision ?? "loading"}</p>
-        <p className="model-id">Label {models?.normalize ?? "loading"}</p>
-        <p className="model-id">Verdict {models?.verdict ?? "loading"}</p>
+        <p className="model-id mt-2">Vision {MODEL_DEFAULTS.vision}</p>
+        <p className="model-id">Label {MODEL_DEFAULTS.normalize}</p>
+        <p className="model-id">Verdict {MODEL_DEFAULTS.verdict}</p>
       </div>
       <div className="mt-4">
         {result.evidence.map((item, index) => (

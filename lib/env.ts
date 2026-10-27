@@ -1,5 +1,6 @@
 import { outputTokenCap, requestTokenBudget } from "./budget";
 import { blockUltra, MODEL_DEFAULTS, NEBIUS_BASE_URL_DEFAULT } from "./models";
+import { llmPaused } from "./server/pause";
 
 /** Dynamic env access so Next does not inline secret values at build time. */
 export function env(name: string): string | undefined {
@@ -20,6 +21,7 @@ export type DemoDecision = {
 
 /** Shared refusal for Nebius and Tavily. Null means the demo switch is not the reason to stop. */
 export function liveCallsBlockedReason(): string | null {
+  if (llmPaused()) return "Live model calls are paused.";
   const llm = (env("LLM_ENABLED") ?? "").toLowerCase();
   if (llm === "false" || llm === "0" || llm === "off" || llm === "no") {
     return "LLM_ENABLED is off, so this live call was refused.";
@@ -50,6 +52,16 @@ export function demoDecision(forceDemo = false): DemoDecision {
     };
   }
 
+  if (forceDemo) {
+    return {
+      demo: true,
+      liveBlocked: false,
+      demoLocked: !forcedLive,
+      canUseLive,
+      reason: "This example is served from the bundled snapshot. Live models are not called.",
+    };
+  }
+
   if (forcedDemo) {
     return {
       demo: true,
@@ -77,16 +89,6 @@ export function demoDecision(forceDemo = false): DemoDecision {
       demoLocked: false,
       canUseLive: true,
       reason: "DEMO_MODE is set to live.",
-    };
-  }
-
-  if (forceDemo) {
-    return {
-      demo: true,
-      liveBlocked: false,
-      demoLocked: false,
-      canUseLive,
-      reason: "This check was sent as a demo example.",
     };
   }
 

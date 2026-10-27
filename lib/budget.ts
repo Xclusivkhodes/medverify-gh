@@ -18,6 +18,11 @@ export function outputTokenCap(): number {
   return Math.min(HARD_MAX_TOKENS, Math.max(128, Math.floor(raw)));
 }
 
+/** Super reasons before it writes. Give it the hard ceiling, not the Nano default. */
+export function superOutputTokenCap(): number {
+  return HARD_MAX_TOKENS;
+}
+
 export function requestTokenBudget(): number {
   const raw = Number(readEnv("NEBIUS_REQUEST_TOKEN_BUDGET") ?? DEFAULT_REQUEST_TOKEN_BUDGET);
   const cap = Number.isFinite(raw) ? Math.floor(raw) : DEFAULT_REQUEST_TOKEN_BUDGET;

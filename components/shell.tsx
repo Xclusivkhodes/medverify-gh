@@ -52,12 +52,10 @@ export function Shell({
         )}
         {title ? <p className="topbar-title">{title}</p> : wide ? <DesktopNav /> : null}
         <div className="topbar-actions">
-          {wide ? (
-            <div className="lang from-desk" role="group" aria-label="Language">
-              <button type="button" aria-pressed={lang === "en"} onClick={() => setLang("en")}>EN</button>
-              <button type="button" aria-pressed={lang === "tw"} lang="tw" onClick={() => setLang("tw")}>Twi</button>
-            </div>
-          ) : null}
+          <div className="lang" role="group" aria-label="Language">
+            <button type="button" aria-pressed={lang === "en"} onClick={() => setLang("en")}>EN</button>
+            <button type="button" className="from-desk" aria-pressed={lang === "tw"} lang="tw" onClick={() => setLang("tw")}>Twi</button>
+          </div>
           <button
             type="button"
             className="btn btn-outline btn-icon theme-toggle"

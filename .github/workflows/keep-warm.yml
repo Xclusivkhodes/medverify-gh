@@ -1,0 +1,29 @@
+# Opt-in ping for a judging window. The app never calls this.
+# Render free instances spin down after 15 minutes without inbound traffic.
+# An inbound ping keeps one instance awake and spends the workspace's free hours.
+#
+# To turn it on for the window:
+# 1. Set repository variables KEEP_WARM=true and KEEP_WARM_URL=https://your-host
+# 2. Uncomment the schedule below, then comment it again when judging ends.
+name: Keep warm
+
+on:
+  workflow_dispatch:
+  # schedule:
+  #   - cron: "*/10 * * * *"
+
+jobs:
+  ping:
+    if: vars.KEEP_WARM == 'true'
+    runs-on: ubuntu-latest
+    steps:
+      - name: Ping /api/status
+        env:
+          KEEP_WARM_URL: ${{ vars.KEEP_WARM_URL }}
+        run: |
+          if [ -z "$KEEP_WARM_URL" ]; then
+            echo "KEEP_WARM_URL is not set."
+            exit 1
+          fi
+          curl --fail --silent --show-error --max-time 70 "${KEEP_WARM_URL%/}/api/healthz" -o /dev/null
+          echo "Ping ok"

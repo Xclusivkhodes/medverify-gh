@@ -183,7 +183,7 @@ if (outputTokenCap() > HARD_MAX_TOKENS) fail("budget", "cap exceeded the hard ce
 process.env.DEMO_MODE = "true";
 const { resetLiveAttempts, liveAttemptCount } = await import("../lib/providers/nebius");
 const { resetTavilyAttempts, tavilyAttemptCount } = await import("../lib/providers/tavily");
-const { runMedicineCheck } = await import("../lib/modes/medicine/pipeline");
+const { MedicineModeError, runMedicineCheck } = await import("../lib/modes/medicine/pipeline");
 resetLiveAttempts();
 resetTavilyAttempts();
 const offline = await runMedicineCheck({ scenarioId: "harbour-clear", forceDemo: true });
@@ -331,6 +331,224 @@ for (let i = 0; i < 3; i += 1) {
   if (!rateLimit("eval-ip", 3).ok) fail("limit", "early request was refused");
 }
 if (rateLimit("eval-ip", 3).ok) fail("limit", "limit did not trip");
+
+const { applyCitedWording, dropUnknownCitations, numberEvidence } = await import("../lib/modes/medicine/citations");
+const { chooseVerdictModel } = await import("../lib/modes/medicine/routing");
+const { MODEL_DEFAULTS: textDefaults, OPTIONAL_REASONING_MODELS: reasoningModels } = await import("../lib/models");
+const numbered = numberEvidence([
+  { role: "match", title: "FDA alert", url: "https://fdaghana.gov.gh/alert", publisher: "Ghana FDA", note: "batch" },
+  { role: "reviewed", title: "skip", url: "javascript:alert(1)", publisher: "no", note: "" },
+]);
+if (numbered.length !== 1 || numbered[0]?.n !== 1) fail("citations", "an unsafe url was numbered");
+const kept = applyCitedWording("See [1] and [9] at https://evil.example/phish and https://fdaghana.gov.gh/alert.", numbered);
+if (
+  kept.dropped.join(",") !== "9" ||
+  !kept.text.includes("[1]") ||
+  kept.text.includes("[9]") ||
+  kept.text.includes("evil.example") ||
+  !kept.text.includes("https://fdaghana.gov.gh/alert")
+) {
+  fail("citations", `wording became “${kept.text}” dropped ${kept.dropped.join(",")}`);
+}
+const zero = dropUnknownCitations("no [0] here", 2);
+if (!zero.dropped.includes(0) || zero.text.includes("[0]")) fail("citations", "citation 0 was kept");
+
+const sureModel = chooseVerdictModel({
+  configured: textDefaults.verdict,
+  confidence: 0.98,
+  exactBatch: true,
+  demo: false,
+  softBudgetReached: false,
+});
+if (sureModel.escalated || sureModel.model !== textDefaults.verdict) fail("routing", `exact batch used ${sureModel.model}`);
+const lowModel = chooseVerdictModel({
+  configured: textDefaults.verdict,
+  confidence: 0.55,
+  exactBatch: false,
+  demo: false,
+  softBudgetReached: false,
+});
+if (!lowModel.escalated || lowModel.model !== reasoningModels.super) fail("routing", `low confidence stayed on ${lowModel.model}`);
+const softModel = chooseVerdictModel({
+  configured: textDefaults.verdict,
+  confidence: 0.55,
+  exactBatch: false,
+  demo: false,
+  softBudgetReached: true,
+});
+if (softModel.escalated || softModel.model !== textDefaults.verdict) fail("routing", "the soft budget still escalated");
+const demoRoute = chooseVerdictModel({
+  configured: textDefaults.verdict,
+  confidence: 0.2,
+  exactBatch: false,
+  demo: true,
+  softBudgetReached: false,
+});
+if (demoRoute.escalated) fail("routing", "demo mode escalated");
+const ultraLow = chooseVerdictModel({
+  configured: reasoningModels.ultra,
+  confidence: 0.2,
+  exactBatch: false,
+  demo: false,
+  softBudgetReached: false,
+});
+if (ultraLow.model === reasoningModels.ultra || ultraLow.model !== reasoningModels.super) {
+  fail("routing", `low-confidence Ultra path returned ${ultraLow.model}`);
+}
+const ultraSure = chooseVerdictModel({
+  configured: reasoningModels.ultra,
+  confidence: 0.98,
+  exactBatch: true,
+  demo: false,
+  softBudgetReached: false,
+});
+if (ultraSure.model !== textDefaults.verdict) fail("routing", `sure Ultra path returned ${ultraSure.model}`);
+
+cacheSet("expired-key", { text: "stale", usage: null, answerSource: "content" }, -1);
+if (cacheGet("expired-key")) fail("cache", "an expired entry was returned");
+const { STAGE_TTL_MS, stageCacheKey } = await import("../lib/providers/cache");
+const { prewarmShowcase } = await import("../lib/modes/medicine/prewarm");
+const { fieldIdentity, verdictIdentity } = await import("../lib/modes/medicine/cache-identity");
+const { outputTokenCap: tokenCap, superOutputTokenCap } = await import("../lib/budget");
+if (superOutputTokenCap() < tokenCap()) fail("budget", "Super cap is below the Nano cap");
+if (STAGE_TTL_MS.tavily <= STAGE_TTL_MS.vision) fail("cache", "Tavily ttl is not longer than vision");
+if (prewarmShowcase(fixedNow) !== 3) fail("prewarm", "the three example packs were not seeded");
+const paraScenario = (await import("../lib/modes/medicine/scenarios")).getScenario("para-clear-l220008");
+if (!paraScenario) fail("prewarm", "Para Clear is missing");
+else {
+  const paraAssessment = assessMedicine(paraScenario.fields, fixedNow);
+  const verdictHit = cacheGet(
+    stageCacheKey("verdict", {
+      model: textDefaults.verdict,
+      maxTokens: tokenCap(),
+      identity: verdictIdentity(paraAssessment),
+    }),
+  );
+  if (!verdictHit?.text.includes("Do not use")) fail("prewarm", "verdict cache missed Para Clear");
+  const normalizeHit = cacheGet(
+    stageCacheKey("normalize", {
+      model: textDefaults.normalize,
+      maxTokens: tokenCap(),
+      identity: fieldIdentity(paraScenario.fields),
+    }),
+  );
+  if (!normalizeHit) fail("prewarm", "normalize cache missed Para Clear");
+}
+
+let badImage = false;
+try {
+  await runMedicineCheck({ productName: "Zedexol", imageDataUrl: "data:image/png;base64,AAAA", forceDemo: true });
+} catch (error) {
+  badImage = error instanceof MedicineModeError && error.status === 400;
+}
+if (!badImage) fail("image", "a non-image payload was accepted");
+const sharpMod = await import("sharp");
+const sharp = sharpMod.default;
+const dirty = await sharp({
+  create: { width: 8, height: 8, channels: 3, background: { r: 12, g: 40, b: 90 } },
+})
+  .jpeg()
+  .withMetadata({ exif: { IFD0: { ImageDescription: "SECRET-GPS" } } })
+  .toBuffer();
+const clean = await (await import("../lib/server/image")).sanitizePackImage(`data:image/jpeg;base64,${dirty.toString("base64")}`);
+if (!clean.dataUrl.startsWith("data:image/jpeg;base64,") || clean.sha256.length !== 64) fail("image", "re-encode did not return a jpeg");
+const cleanMeta = await sharp(Buffer.from(clean.dataUrl.split(",")[1] ?? "", "base64")).metadata();
+if (cleanMeta.exif) fail("image", "EXIF survived re-encode");
+
+const savedEnv = {
+  DEMO_MODE: process.env.DEMO_MODE,
+  LLM_ENABLED: process.env.LLM_ENABLED,
+  NEBIUS_API_KEY: process.env.NEBIUS_API_KEY,
+  TAVILY_API_KEY: process.env.TAVILY_API_KEY,
+  NEBIUS_BASE_URL: process.env.NEBIUS_BASE_URL,
+};
+process.env.DEMO_MODE = "false";
+delete process.env.LLM_ENABLED;
+process.env.NEBIUS_API_KEY = "sk-test-not-a-real-key";
+process.env.TAVILY_API_KEY = "tvly-test-not-a-real-key";
+process.env.NEBIUS_BASE_URL = "http://127.0.0.1:9";
+try {
+  const { ProviderError } = await import("../lib/providers/nebius");
+  type Complete = NonNullable<NonNullable<Parameters<typeof runMedicineCheck>[1]>["completeJson"]>;
+  resetLiveAttempts();
+  resetTavilyAttempts();
+  const example = await runMedicineCheck({ scenarioId: "clearview-drops" });
+  if (example.runMode !== "demo") fail("examples", `scenario ran ${example.runMode}`);
+  if (liveAttemptCount() !== 0 || tavilyAttemptCount() !== 0) fail("examples", "a scenario id spent a live call");
+  const seen: string[] = [];
+  const completeJson: Complete = async (options) => {
+    seen.push(`${options.stage ?? "verdict"}:${options.model}`);
+    return {
+      json:
+        options.stage === "verdict"
+          ? {
+              headline: "Word [1] [99]",
+              summary: "See [1]. https://evil.example/phish",
+              actions: ["Call 024 000 0000"],
+              pharmacistNote: "Ask a pharmacist.",
+            }
+          : { redFlags: [] },
+      model: options.model,
+      cached: false,
+      maxTokens: options.maxTokens ?? 512,
+      budgetRemaining: 1000,
+      usage: null,
+      answerSource: "content" as const,
+    };
+  };
+  const failedSearch = async () => {
+    throw new ProviderError("stubbed search failure", "tavily", 503);
+  };
+  const emptySearch = async () => ({ hits: [], queries: ["stub"], partial: false });
+
+  const missed = await runMedicineCheck(
+    { productName: "Zedexol Syrup", batch: "ZX-9", expiry: "12/2028" },
+    { completeJson, searchAlerts: failedSearch },
+  );
+  if (missed.outcome !== "search_failed" || /no alerts found/i.test(missed.headline)) {
+    fail("search-failed", `${missed.outcome} / ${missed.headline}`);
+  }
+  if (seen.some((item) => item.startsWith("verdict:"))) fail("search-failed", `verdict ran: ${seen.join(",")}`);
+
+  seen.length = 0;
+  const alerted = await runMedicineCheck(
+    { productName: "Para Clear Suspension 125", batch: "L220008", expiry: "12/2024" },
+    { completeJson, searchAlerts: failedSearch },
+  );
+  if (alerted.outcome !== "verdict" || alerted.presentation !== "do_not_use") {
+    fail("search-failed", `a curated match was hidden: ${alerted.outcome} ${alerted.presentation}`);
+  }
+  if (!seen.some((item) => item === `verdict:${textDefaults.verdict}`)) fail("routing", `exact batch model was ${seen.join(",")}`);
+  if (seen.some((item) => item.toLowerCase().includes("super") || item.includes("Ultra"))) {
+    fail("routing", `exact batch called ${seen.join(",")}`);
+  }
+  if (alerted.headline.includes("[99]") || alerted.summary.includes("evil.example")) {
+    fail("citations", `a model citation leaked: ${alerted.headline} ${alerted.summary}`);
+  }
+  if (!alerted.summary.includes("[1]") && !alerted.headline.includes("[1]")) fail("citations", "an allowed citation was dropped");
+
+  seen.length = 0;
+  const unsure = await runMedicineCheck(
+    { productName: "Northwind Cough Syrup", batch: "NW-1", expiry: "01/2024" },
+    { completeJson, searchAlerts: emptySearch },
+  );
+  if (!seen.some((item) => item === `verdict:${reasoningModels.super}`)) {
+    fail("routing", `low confidence did not use Super (${unsure.presentation} ${unsure.confidence}): ${seen.join(",")}`);
+  }
+
+  seen.length = 0;
+  await runMedicineCheck(
+    { productName: "Northwind Cough Syrup", batch: "NW-1", expiry: "01/2024" },
+    { completeJson, searchAlerts: emptySearch, softBudgetReached: true },
+  );
+  if (seen.some((item) => item.toLowerCase().includes("super"))) fail("routing", `the soft budget used Super: ${seen.join(",")}`);
+  if (liveAttemptCount() !== 0 || tavilyAttemptCount() !== 0) fail("routing", "a stubbed check touched a live provider");
+} finally {
+  for (const [key, value] of Object.entries(savedEnv)) {
+    if (value === undefined) delete process.env[key];
+    else process.env[key] = value;
+  }
+}
 
 process.env.LLM_ENABLED = "false";
 process.env.DEMO_MODE = "false";

@@ -5,8 +5,10 @@ services:
   - type: web
     name: medverify-gh
     runtime: docker
+    plan: free
     dockerfilePath: ./Dockerfile
-    healthCheckPath: /api/status
+    # Free web services have no disk. LLM_ENABLED stays false so the spend file is not the budget.
+    healthCheckPath: /api/healthz
     envVars:
       - key: DEMO_MODE
         value: "true"
@@ -16,6 +18,8 @@ services:
         value: "1"
       - key: NODE_ENV
         value: production
+      - key: TRUST_PROXY
+        value: "1"
       # Set these only when you mean to spend credits:
       # - key: NEBIUS_API_KEY
       #   sync: false
