@@ -2,6 +2,7 @@ import { mkdir, rename, unlink, writeFile } from "node:fs/promises";
 import { mkdirSync, readFileSync } from "node:fs";
 import { join } from "node:path";
 import type { TokenUsage } from "../budget";
+import { aiCapReachedSync, aiSpendCapUsd, lastKnownAiSpendUsd } from "./ai-spend-cap";
 
 export type BudgetReason = "budget" | "busy";
 
@@ -57,17 +58,22 @@ export function flushSpend(): Promise<void> {
   return writeChain;
 }
 
+/**
+ * The cap is AI_SPEND_CAP_USD (see ai-spend-cap.ts), which also does the exact per-call stop.
+ * This view keeps the soft line (Nano only) and stops new checks at the hard line.
+ */
 export function budgetPublic() {
-  const cap = numberEnv("BUDGET_USD", 1);
+  const cap = aiSpendCapUsd();
   const softRatio = Math.min(0.95, numberEnv("BUDGET_SOFT_RATIO", 0.7));
-  const hardRatio = Math.min(0.99, Math.max(softRatio, numberEnv("BUDGET_HARD_RATIO", 0.9)));
+  const hardRatio = Math.min(1, Math.max(softRatio, numberEnv("BUDGET_HARD_RATIO", 1)));
+  const spent = Math.max(spentUsd, lastKnownAiSpendUsd());
   return {
-    spentUsd: Math.round(spentUsd * 10000) / 10000,
+    spentUsd: Math.round(spent * 10000) / 10000,
     capUsd: cap,
     softUsd: Math.round(cap * softRatio * 100) / 100,
     hardUsd: Math.round(cap * hardRatio * 100) / 100,
-    softReached: spentUsd >= cap * softRatio,
-    hardReached: spentUsd >= cap * hardRatio,
+    softReached: spent >= cap * softRatio,
+    hardReached: spent >= cap * hardRatio || aiCapReachedSync(),
     inflight,
     estimate: "Not an invoice. Tokens are priced high on purpose so the stop arrives early.",
   };

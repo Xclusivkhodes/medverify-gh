@@ -66,7 +66,7 @@ The verdict model is given a numbered list of sources and may cite only those nu
 
 `DEMO_MODE=true` is the default. `LLM_ENABLED=false` forces demo even if `DEMO_MODE` is turned off. Leave both like that until you accept the API budget.
 
-A live process also keeps a rough spend counter (`BUDGET_USD` default $1, soft 70%, hard 90%). The price is a high estimate, not a Nebius invoice. Past the hard line, live calls stop. `POST /api/verify` is rate-limited per IP and globally. Two live checks can run at once.
+Live AI has a hard spend cap (`AI_SPEND_CAP_USD`, default $0.30, this app's share of the $1 Token Factory credit). Each call reserves its worst case (prompt + `max_tokens`) at the model's Token Factory price, and settles to the real `usage` when it returns. The running total is kept in Upstash Redis, or a local file. At the cap, live calls stop and checks run in demo mode with a clear note. See [docs/AI_SPEND_CAP.md](docs/AI_SPEND_CAP.md). `POST /api/verify` is rate-limited per IP and globally. Two live checks can run at once.
 
 ## Deploy
 
