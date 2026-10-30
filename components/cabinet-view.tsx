@@ -14,7 +14,7 @@ import {
 } from "@phosphor-icons/react";
 import { Shell } from "@/components/shell";
 import { SiteFooter } from "@/components/site-footer";
-import { CONTACTS, footerDisclaimer } from "@/lib/brand";
+import { CONTACTS } from "@/lib/brand";
 import {
   expiryBucket,
   noticeFor,
@@ -103,10 +103,10 @@ export function CabinetView() {
         {!store.packs.length ? (
           <section className="card p-5 mt-6">
             <h2 className="t-h3">Nothing saved yet</h2>
-            <ol className="mt-3 grid gap-2">
-              <li>1. On the home screen, choose Eye drops.</li>
-              <li>2. Check it. The answer should say Registered, no alerts.</li>
-              <li>3. Save it here, then simulate a new FDA alert.</li>
+            <ol className="steps-ol mt-3 grid gap-2">
+              <li>On the home screen, choose Eye drops.</li>
+              <li>Check it. The answer should say Registered, no alerts.</li>
+              <li>Save it here, then simulate a new FDA alert.</li>
             </ol>
             <Link href="/" className="btn btn-primary btn-block mt-4">Check a pack</Link>
           </section>
@@ -259,7 +259,6 @@ export function CabinetView() {
           <Link href="/pharmacist" className="btn btn-plain">Pharmacist stock log</Link>
         </div>
         {perm ? <p className="t-small t-muted mt-3" role="status">{perm}</p> : null}
-        <p className="t-small t-subtle mt-8">{footerDisclaimer()}</p>
       </main>
       <SiteFooter />
     </Shell>

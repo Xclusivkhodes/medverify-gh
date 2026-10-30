@@ -179,3 +179,47 @@ button { cursor: pointer; }
 @media (min-width: 768px) and (max-width: 1099px) {
   .shell-wide, .app { max-width: 640px; }
 }
+
+/* ---------- Mobile polish ----------
+   Phones get every control at 44px or more, no collisions in the top bar,
+   and lists and tables that read top to bottom. */
+
+/* Step lists: the description always sits under its title, in column 2. */
+.todo li > b, .todo li > span { grid-column: 2; }
+
+/* Numbered list with real list markers. */
+.steps-ol { list-style: decimal; padding-left: 1.25rem; }
+.steps-ol li { padding-left: 4px; }
+.steps-ol li::marker { color: var(--color-primary); font-family: var(--font-mono); font-weight: 500; }
+
+/* Top bar controls meet the 44px tap size. */
+.topbar .lang { padding: 0; }
+.topbar .lang button { min-height: 44px; min-width: 44px; }
+.topbar .btn-icon { width: 44px; height: 44px; }
+
+/* The low-data checkbox: the whole row is the target. */
+.check-toggle { min-height: 44px; cursor: pointer; }
+.check-toggle input[type="checkbox"] { width: 20px; height: 20px; flex: none; accent-color: var(--color-primary); }
+
+/* Footer links sit on a 44px row with room either side. */
+.site-footer a { padding: 0 2px; }
+
+@media (max-width: 639px) {
+  /* The page heading already names the screen, so the centred title would
+     only collide with the logo on a phone. */
+  .topbar-title { display: none; }
+
+  /* Tables become stacked cards so nothing scrolls sideways. */
+  .tbl-stack thead { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); }
+  .tbl-stack, .tbl-stack tbody, .tbl-stack tr, .tbl-stack td { display: block; width: 100%; }
+  .tbl-stack tr { padding: 14px 16px; border-bottom: 1px solid var(--color-border); }
+  .tbl-stack tr:last-child { border-bottom: 0; }
+  .tbl-stack td { border: 0; padding: 2px 0; }
+  .tbl-stack td[data-label]:not(:first-child) { display: grid; grid-template-columns: 7.5rem minmax(0, 1fr); gap: 8px; font-size: var(--text-small-size); }
+  .tbl-stack td[data-label]:not(:first-child)::before { content: attr(data-label); color: var(--color-text-subtle); }
+  .tbl-stack td:first-child { padding-bottom: 6px; }
+}
+/* Long field hints sit under the label on phones instead of squeezing it. */
+@media (max-width: 479px) {
+  .field-label:has(.opt) { flex-direction: column; align-items: flex-start; gap: 2px; }
+}

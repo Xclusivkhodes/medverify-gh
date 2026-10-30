@@ -644,7 +644,7 @@ function Home(props: {
             </button>
           </form>
           <p className="mt-4">
-            <label className="flex items-center gap-2 t-small">
+            <label className="check-toggle flex items-center gap-3 t-small">
               <input type="checkbox" checked={props.lowData} onChange={(event) => props.onLowData(event.target.checked)} />
               Low-data mode. Type the label. Don’t upload a photo.
             </label>
