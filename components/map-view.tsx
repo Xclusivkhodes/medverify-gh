@@ -4,7 +4,6 @@ import { useState } from "react";
 import { MapPin } from "@phosphor-icons/react";
 import { Shell } from "@/components/shell";
 import { SiteFooter } from "@/components/site-footer";
-import { footerDisclaimer } from "@/lib/brand";
 import { GHANA_REGIONS, type GhanaRegion } from "@/lib/cabinet/regions";
 import { addReport, useReports } from "@/lib/client/reports-store";
 import { FACILITY_EXCERPT, FACILITY_SOURCE } from "@/lib/modes/medicine/facilities";
@@ -68,7 +67,7 @@ export function MapView() {
           This is a short excerpt of FDA Ghana’s September 2026 list of licensed local manufacturing sites. It is not every pharmacy, and licences expire. Search the FDA register before you rely on it.
         </p>
         <div className="card mt-4" style={{ overflowX: "auto" }}>
-          <table className="tbl">
+          <table className="tbl tbl-stack">
             <caption className="sr-only">Excerpt of FDA licensed local manufacturers</caption>
             <thead>
               <tr>
@@ -81,10 +80,10 @@ export function MapView() {
             <tbody>
               {FACILITY_EXCERPT.map((row) => (
                 <tr key={row.certificate}>
-                  <td><strong>{row.name}</strong><br /><span className="t-small t-muted">{row.where}</span></td>
-                  <td>{row.region}</td>
-                  <td className="t-mono">{row.certificate}</td>
-                  <td>{row.expires}</td>
+                  <td data-label="Name"><strong>{row.name}</strong><br /><span className="t-small t-muted">{row.where}</span></td>
+                  <td data-label="Region">{row.region}</td>
+                  <td data-label="Certificate" className="t-mono">{row.certificate}</td>
+                  <td data-label="Expires">{row.expires}</td>
                 </tr>
               ))}
             </tbody>
@@ -95,7 +94,6 @@ export function MapView() {
           {" · "}
           <a href={FACILITY_SOURCE.url}>{FACILITY_SOURCE.title}</a>
         </p>
-        <p className="t-small t-subtle mt-8">{footerDisclaimer()}</p>
       </main>
       <SiteFooter />
     </Shell>

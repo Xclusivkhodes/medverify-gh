@@ -5,7 +5,7 @@ import { useState, type FormEvent } from "react";
 import { Storefront, Trash } from "@phosphor-icons/react";
 import { Shell } from "@/components/shell";
 import { SiteFooter } from "@/components/site-footer";
-import { footerDisclaimer, type Presentation } from "@/lib/brand";
+import { type Presentation } from "@/lib/brand";
 import { logStock, removeStock, useCabinet } from "@/lib/client/cabinet-store";
 import { streamCheck } from "@/lib/client/stream";
 
@@ -103,7 +103,7 @@ export function PharmacistView() {
           {error ? <p className="note note--warn" role="alert">{error}</p> : null}
         </form>
         <p className="t-small t-muted mt-4">
-          <Link href="/">Photograph a pack</Link> on the home screen, then choose Log in pharmacist stock on the answer.
+          <Link href="/" className="link">Photograph a pack</Link> on the home screen, then choose Log in pharmacist stock on the answer.
         </p>
 
         <section className="mt-8" aria-labelledby="log-h">
@@ -150,7 +150,6 @@ export function PharmacistView() {
             </div>
           ) : null}
         </section>
-        <p className="t-small t-subtle mt-8">{footerDisclaimer()}</p>
       </main>
       <SiteFooter />
     </Shell>

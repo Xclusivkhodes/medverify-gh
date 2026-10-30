@@ -2,7 +2,6 @@
 
 import { Shell } from "@/components/shell";
 import { SiteFooter } from "@/components/site-footer";
-import { footerDisclaimer } from "@/lib/brand";
 import { weeklyDigest } from "@/lib/modes/medicine/digest";
 
 export function DigestView() {
@@ -26,7 +25,6 @@ export function DigestView() {
             </li>
           ))}
         </ol>
-        <p className="t-small t-subtle">{footerDisclaimer()}</p>
       </main>
       <SiteFooter />
     </Shell>
