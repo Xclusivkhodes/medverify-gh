@@ -9,6 +9,7 @@ import { DISCLAIMER, PHARMACIST_NOTE, enforceSafety } from "../../safety";
 import { breakerIsOpen } from "../../server/breaker";
 import { ImageReject, sanitizePackImage } from "../../server/image";
 import { acquireRequestSlot, budgetPublic, BudgetStop } from "../../server/spend";
+import { aiCapReachedSync, aiSpendSnapshot, CAP_REACHED_MESSAGE, CAP_STORE_MISSING_MESSAGE } from "../../server/ai-spend-cap";
 import { asString, formatLongDate, safeHttpUrl } from "../../text";
 import { applyCitedWording, numberEvidence } from "./citations";
 import { fieldIdentity, verdictIdentity } from "./cache-identity";
@@ -127,9 +128,21 @@ function trace(partial: Omit<TraceStep, "durationMs"> & { durationMs?: number })
 
 export async function runMedicineCheck(body: VerifyBody, hooks?: CheckHooks): Promise<MedicineResult> {
   const scenarioKey = asString(body.scenarioId, 80);
-  const decision = demoDecision(Boolean(body.forceDemo) || Boolean(scenarioKey));
+  let decision = demoDecision(Boolean(body.forceDemo) || Boolean(scenarioKey));
   if (decision.liveBlocked) {
     throw new MedicineModeError(decision.reason, 503, "LLM_UNAVAILABLE");
+  }
+  if (!decision.demo) {
+    // Hard AI spend cap: once it is used up (or there is no durable store on Vercel), serve demo mode.
+    const cap = await aiSpendSnapshot();
+    if (cap.capReached || !cap.liveAllowedByStore) {
+      decision = {
+        ...decision,
+        demo: true,
+        demoLocked: true,
+        reason: cap.liveAllowedByStore ? CAP_REACHED_MESSAGE : CAP_STORE_MISSING_MESSAGE,
+      };
+    }
   }
   const breakerOpen = !decision.demo && breakerIsOpen();
   let releaseSlot: (() => void) | null = null;
@@ -612,7 +625,9 @@ async function runMedicineBody(
     runMode: decision.demo ? "demo" : degraded ? "fallback" : "live",
     demoReason: breakerOpen
       ? "The model circuit is open, so this check used the rules and the bundled notices."
-      : decision.reason,
+      : !decision.demo && aiCapReachedSync()
+        ? CAP_REACHED_MESSAGE
+        : decision.reason,
     outcome: searchBlocked ? "search_failed" : "verdict",
     presentation,
     confidence: searchBlocked ? 0 : presented.confidence,

@@ -6,6 +6,7 @@ import { breakerBeforeCall, breakerFailure, breakerSuccess } from "../server/bre
 import { logLlm, type LlmOutcome } from "../server/log";
 import { paidCallLimit, rateLimit } from "../server/limit";
 import { recordUsage, USD_PER_1K } from "../server/spend";
+import { estimatePromptTokens, reserveSpend, settleSpend, SpendCapError, type Reservation } from "../server/ai-spend-cap";
 import { textMark } from "../server/redact";
 import { parseModelJson } from "../text";
 import { extractAssistantText, type AssistantMessage } from "./answer";
@@ -263,8 +264,29 @@ export async function nebiusJson(options: {
     if (attempt > 0) liveAttempts += 1;
     attempt += 1;
     const callStarted = Date.now();
+    // Hard cap: reserve this attempt's worst case (prompt estimate + max_tokens) before it is sent.
+    let reservation: Reservation;
     try {
-      const result = await completeOnce(options.model, options.messages, maxTokens, jsonMode, options.signal);
+      reservation = await reserveSpend(options.model, promptTokenEstimate(options.messages), maxTokens);
+    } catch (error) {
+      if (error instanceof SpendCapError) throw new ProviderError(error.message, "nebius", null);
+      throw error;
+    }
+    try {
+      let result: Awaited<ReturnType<typeof completeOnce>>;
+      try {
+        result = await completeOnce(options.model, options.messages, maxTokens, jsonMode, options.signal);
+      } catch (error) {
+        const status = toError(error).status;
+        // A 4xx was refused before any tokens were generated. Anything else may have been billed.
+        await settleSpend(
+          reservation,
+          status !== null && status >= 400 && status < 500 ? { promptTokens: 0, completionTokens: 0 } : null,
+        );
+        throw error;
+      }
+      // Real cost from the API usage fields, before parsing, so a bad reply still counts.
+      await settleSpend(reservation, result.usage ? { promptTokens: result.usage.prompt, completionTokens: result.usage.completion } : null);
       let json: unknown;
       try {
         json = validateOutput(result.text, options.schema);
@@ -394,6 +416,22 @@ async function completeOnce(
     clearTimeout(timer);
     parent?.removeEventListener("abort", onAbort);
   }
+}
+
+function promptTokenEstimate(messages: ChatMessage[]): number {
+  let text = "";
+  let images = 0;
+  for (const message of messages) {
+    if (typeof message.content === "string") {
+      text += message.content;
+      continue;
+    }
+    for (const part of (message.content ?? []) as unknown as Array<Record<string, unknown>>) {
+      if (part.type === "image_url") images += 1;
+      else if (typeof part.text === "string") text += part.text;
+    }
+  }
+  return estimatePromptTokens(text, images);
 }
 
 export function imageMessage(prompt: string, dataUrl: string): ChatMessage {
